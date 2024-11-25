@@ -1,0 +1,82 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Gst Code" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a style="color: #230BB3;"
+                    href="{% url 'gst-group-list' %}">{% trans "Gst Code List" %}</a></li>
+            {% if edit_gst_list.id %}
+                <li class="breadcrumb-item active">{{ edit_gst_list.gst_group_code }}</li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Edit" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+    <div class="page-header">
+        <h1>Edit Gst Code {% block headertext %}{% endblock %}</h1>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="table-header">
+        <h3><i class="fas fa-solid fa-money-check-dollar"></i> {% trans "Edit Gst Code" %}</h3>
+    </div>
+    <div class="card card-body">
+        <form method="post">
+            {% csrf_token %}
+            <!-- First Row -->
+            <div class="row">
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="gst_code">Gst Code:<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Gst code"
+                               value="{{ edit_gst_list.gst_group_code }}" name="gst_group_code" id="gst_code">
+                        <span class="error-message" style="color: red;">{{ gst_code_error }}</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="description">Description:<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Description"
+                               value="{{ edit_gst_list.description }}" name="description" id="description">
+                        <span class="error-message" style="color: red;">{{ description_error }}</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="gst_rate">Gst Rate:<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="number" placeholder="Gst rate"
+                               value="{{ edit_gst_list.rate }}" name="rate"
+                               id="gst_rate">
+                        <span class="error-message" style="color: red;">{{ rate_error }}</span>
+                    </div>
+                </div>
+            </div>
+            {% block form_actions %}
+                <div class="row">
+                    <div class="col-md-3">
+                        <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;"
+                                data-loading-text="Editing...">Edit
+                        </button>
+                    </div>
+                </div>
+            {% endblock form_actions %}
+            {% if search_result %}
+                <h1> {{ search_result }}</h1>
+            {% endif %}
+
+        </form>
+    </div>
+
+
+{% endblock %}

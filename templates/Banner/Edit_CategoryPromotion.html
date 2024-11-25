@@ -1,0 +1,208 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} edit-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Edit Category Promotion Banner" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'CategoryPromotionList-list' %}">{% trans "All Category Banner Sets" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Edit Category Promotion Banner" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+<div class="page-header">
+    <h1>Edit Category Promotion Banner {% block headertext %}{% endblock %}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="table-header mr-3 ml-3">
+    <h3><i class="fas fa-folder"></i> {% trans "Edit Category Promotion Banner" %}</h3>
+</div>
+<div class="card card-body mr-3 ml-3 mb-3">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="row pr-3 pl-3">
+             <div class="col-md-6">
+                <div class="form-group">
+                    <label for="setName">Set Name:<span style="color: red; font-size: large;">*</span></label>
+                    <input type="text" name="setName" class="form-control" value="{{ promotion_set.name }}" required>
+                    <input type="hidden" name="original_setName" value="{{ promotion_set.name }}">
+                </div>
+             </div>
+             <div class="col-md-6">
+                <div class="form-group">
+                    <label class="mt-2" for="setIsActive">Is Active:</label>
+                    <input type="checkbox" name="setIsActive" class="form-control ml-2 mt-2 w-auto h-auto" {% if promotion_set.is_active %}checked{% endif %}>
+                    <input type="hidden" name="original_setIsActive" value="{{ promotion_set.is_active }}">
+                </div>
+             </div>
+        </div>
+        <table class="table table-striped table-hover table-bordered ">
+            <thead style="background-color: #230BB3 !important;color: #fff;">
+                <tr>
+                    <th style="font-weight:normal;">Image:<span style="color: red; font-size: large;">*</span></th>
+                    <th style="font-weight:normal;">Category:<span style="color: red; font-size: large;">*</span></th>
+                    <th style="font-weight:normal;">Sub Category</th>
+                    <th style="font-weight:normal;">Link</th>
+                    <th style="font-weight:normal;">Title:<span style="color: red; font-size: large;">*</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for banner in promotion_set.categorypromotion_set.all %}
+                <tr>
+                    <td style="width: 500px;">
+                        <div class="form-row align-items-center">
+                            <div class="col-auto">
+                                <input type="file" name="image{{ forloop.counter }}" value="{{ banner.image.url }}" class="form-control image-input" style="width: 200px;">
+                                <input type="hidden" name="original_image{{ forloop.counter }}" value="{{ banner.image.url }}">
+                            </div>
+                            <div class="col-auto">
+                                <img class="preview-image{{ forloop.counter }}" src="{{ banner.image.url }}" style="max-width: 100px; max-height: 100px;">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <select name="category{{ forloop.counter }}" class="form-control category-select" style="width: 150px;" required>
+                            <option value="">Select a category</option>
+                            {% if banner.category and banner.category.get_parent %}
+                                {% comment %} Display parent category option if a parent exists {% endcomment %}
+                                <option value="{{ banner.category.get_parent.id }}" selected>{{ banner.category.get_parent.name }}</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            {% else %}
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if banner.category and category.id == banner.category.id %}selected{% endif %}>{{ category.name }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                        <input type="hidden" name="original_category{{ forloop.counter }}" value="{% if banner.category %}{{ banner.category.id }}{% endif %}">
+                    </td>
+                    
+                    <td>
+                        <select name="sub_category{{ forloop.counter }}" class="form-control sub-category-select" style="width: 150px;">
+                            <option value="">Select a subcategory</option>
+                            
+                            {% if banner.category and banner.category.get_parent %}
+                                {% for subcategory in banner.category.subcategories %}
+                                    <option value="{{ subcategory.id }}" {% if banner.sub_category and subcategory.id == banner.sub_category.id %}selected{% endif %}>{{ subcategory.name }}</option>
+                                {% endfor %}
+                                <option value="{{ banner.category.id }}" selected>{{ banner.category.name }}</option>
+                            {% endif %}
+                            
+                        </select>
+                        <input type="hidden" name="original_sub_category{{ forloop.counter }}" value="{% if banner.sub_category %}{{ banner.sub_category.id }}{% endif %}">
+                    </td>
+                    
+                    <td>
+                        <input type="text" name="Link{{ forloop.counter }}" id="Link{{ forloop.counter }}" value="{{ banner.Link }}" class="form-control link-input">
+                        <input type="hidden" name="original_Link{{ forloop.counter }}" value="{{ banner.Link }}">
+                    </td>
+                    <td><input type="text" name="title{{ forloop.counter }}" class="form-control" value="{{ banner.title }}" required>
+                        <input type="hidden" name="original_title{{ forloop.counter }}" value="{{ banner.title }}"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-start">
+            <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Save</button>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Loop through each banner to attach the change event to category selects and link inputs
+        {% for banner in promotion_set.categorypromotion_set.all %}
+        (function(counter) {
+            var categorySelect = $('.category-select[name="category' + counter + '"]');
+            var subCategorySelect = $('.sub-category-select[name="sub_category' + counter + '"]');
+            var linkInput = $('#Link' + counter);
+
+            function toggleFields() {
+                if (categorySelect.val()) {
+                    linkInput.prop('disabled', true);
+                } else {
+                    linkInput.prop('disabled', false);
+                }
+
+                if (linkInput.val()) {
+                    categorySelect.prop('disabled', true);
+                    subCategorySelect.prop('disabled', true);
+                } else {
+                    categorySelect.prop('disabled', false);
+                    subCategorySelect.prop('disabled', false);
+                }
+            }
+
+            categorySelect.on('change', function() {
+                toggleFields();
+
+                var parentCategoryId = $(this).val();
+                if (parentCategoryId) {
+                    $.ajax({
+                        url: '{% url "get_child_categories" %}',
+                        method: 'GET',
+                        data: { 'parent_category_id': parentCategoryId },
+                        success: function(data) {
+                            subCategorySelect.empty();
+                            if (data.length === 0) {
+                                subCategorySelect.append('<option value="">No subcategory available</option>');
+                            } else {
+                                subCategorySelect.append('<option value="">Select a subcategory</option>');
+                                for (var i = 0; i < data.length; i++) {
+                                    subCategorySelect.append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                                }
+                            }
+                        },
+                        error: function(error) {
+                            console.log('Error fetching child categories:', error);
+                        }
+                    });
+                } else {
+                    subCategorySelect.empty();
+                    subCategorySelect.append('<option value="">Select a subcategory</option>');
+                }
+            });
+
+            linkInput.on('input', function() {
+                toggleFields();
+            });
+
+            toggleFields();
+
+            // Handle image preview
+            $('.image-input[name="image' + counter + '"]').on('change', function() {
+                var input = this;
+                var preview = $(this).closest('.form-row').find('.preview-image' + counter);
+
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        preview.attr('src', e.target.result);
+                        preview.show();
+                    };
+
+                    reader.readAsDataURL(input.files[0]);
+                } else {
+                    preview.hide();
+                }
+            });
+        })({{ forloop.counter }});
+        {% endfor %}
+    });
+</script>
+{% endblock %}

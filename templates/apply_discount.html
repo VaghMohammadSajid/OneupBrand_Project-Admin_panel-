@@ -1,0 +1,54 @@
+{% extends 'oscar/dashboard/layout.html' %}
+
+{% block header %}
+<div class="page-header">
+    <h1>Apply Discount {% block headertext %}{% endblock %}</h1>
+</div>
+{% endblock %}
+
+
+{% block content %}
+    <div class="dashboard-content">
+        <form method="post" id="discountForm" class="mx-auto my-4 p-4 bg-light rounded" style="max-width: 400px;">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="{{ form.discount_type.id_for_label }}" class="form-label">Discount Type:</label>
+                {{ form.discount_type }}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.discount_amount.id_for_label }}" class="form-label">Discount Amount:</label>
+                {{ form.discount_amount }}
+            </div>
+
+            <div class="mb-3 form-check">
+                {{ form.apply_to_all_categories }}
+                <label for="{{ form.apply_to_all_categories.id_for_label }}" class="form-check-label">Apply to All Categories</label>
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.selected_categories.id_for_label }}" class="form-label">Selected Categories:</label>
+                {{ form.selected_categories }}
+            </div>
+
+            <button type="submit" class="btn btn-success">Apply Discount</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var applyToAllCategoriesCheckbox = document.getElementById("id_apply_to_all_categories");
+            var selectedCategoriesCheckbox = document.getElementById("id_selected_categories");
+
+            function toggleCategoryFields() {
+                selectedCategoriesCheckbox.style.display = applyToAllCategoriesCheckbox.checked ? "none" : "block";
+            }
+
+            applyToAllCategoriesCheckbox.addEventListener("change", toggleCategoryFields);
+
+            // Initial state
+            toggleCategoryFields();
+        });
+    </script>
+{% endblock %}

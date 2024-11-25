@@ -1,0 +1,26 @@
+{% load i18n %}
+{% load display_tags %}
+
+<li class="nav-item" style="border-bottom: 1px solid #dee2e6;">
+    <a style="color: #230BB3 !important;" href="{% url 'customer:profile-view' %}" class="nav-link{% if active_tab == 'profile' %} active btn-light{% endif %}">{% trans "Profile" %}</a>
+</li>
+<li class="nav-item" style="border-bottom: 1px solid #dee2e6;">
+    <a style="color: #230BB3 !important;" href="{% url 'customer:order-list' %}" class="nav-link{% if active_tab == 'orders' %} active btn-light{% endif %}">{% trans "Order History" %}</a>
+</li>
+<li class="nav-item" style="border-bottom: 1px solid #dee2e6;">
+    <a style="color: #230BB3 !important;" href="{% url 'customer:address-list' %}" class="nav-link{% if active_tab == 'addresses' %} active btn-light{% endif %}">{% trans "Address Book" %}</a>
+</li>
+<li class="nav-item" style="border-bottom: 1px solid #dee2e6;">
+    <a style="color: #230BB3 !important;" href="{% url 'customer:email-list' %}" class="nav-link{% if active_tab == 'emails' %} active btn-light{% endif %}">{% trans "Email History" %}</a>
+</li>
+<li class="nav-item" style="border-bottom: 1px solid #dee2e6;">
+    <a style="color: #230BB3 !important;" href="{% url 'customer:alerts-list' %}" class="nav-link{% if active_tab == 'alerts' %} active btn-light{% endif %}">{% trans "Product Alerts" %}</a>
+</li>
+<li class="nav-item" style="border-bottom: 1px solid #dee2e6;">
+    <a style="color: #230BB3 !important;" href="{% url 'customer:notifications-inbox' %}" class="nav-link{% if active_tab == 'notifications' %} active btn-light{% endif %}">{% trans "Notifications" %}</a>
+</li>
+{% iffeature 'wishlists' %}
+    <li class="nav-item">
+        <a style="color: #230BB3 !important;" href="{% url 'customer:wishlists-list' %}" class="nav-link{% if active_tab == 'wishlists' %} active btn-light{% endif %}">{% trans "Wish Lists" %}</a>
+    </li>
+{% endiffeature %}

@@ -1,0 +1,50 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Send Newsletter" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item">{% trans "Send Newsletter" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>Send Newsletter {% block headertext %}{% endblock %}</h1>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="table-header mr-3 ml-3">
+        <h3><i class="fa fa-paper-plane"></i> {% trans "Send Newsletter" %}</h3>
+    </div>
+        <form method="post" action="{% url 'send-newsletter' %}">
+            {% csrf_token %}
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ SendNewsletter_form.template.label_tag }}<span style="color: red; font-size: large;">*</span>
+                            {{ SendNewsletter_form.template }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ SendNewsletter_form.status.label_tag }}
+                            {{ SendNewsletter_form.status }}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Send Newsletter</button>
+                </div>
+            </div>
+        </form>
+{% endblock %}

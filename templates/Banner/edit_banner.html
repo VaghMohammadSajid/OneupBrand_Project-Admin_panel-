@@ -1,0 +1,259 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Edit Banner" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'banner-list' %}">{% trans "Banners List" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Edit" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+<div class="page-header">
+    <h1>Edit Banner {% block headertext %}{% endblock %}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="table-header mr-3 ml-3">
+    <h3><i class="fas fa-folder"></i> {% trans "Edit Banner" %}</h3>
+</div>
+<div class="card card-body mr-3 ml-3 mb-3">
+    <form method="post" id="edit-banner-form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- <div class="form-group row">
+            <label for="image" class="col-sm-2 col-form-label">Image:</label>
+            <div class="col-sm-10">
+                <input type="file" name="image" id="image-input" class="form-control" style="margin-bottom: 10px;" onchange="previewImage(this)">
+                <img id="image-preview" src="{{ banner.image.url }}" alt="Banner Image" class="img-fluid" style="max-width: 200px; max-height: 200px;">
+            </div>
+        </div> -->
+
+        <div class="row pr-3 pl-3">
+             <div class="col-md-6">
+                <div class="form-group">
+                    <label for="image">Image:</label>
+                    <input type="file" name="image" id="image-input" class="form-control" style="margin-bottom: 10px;" onchange="previewImage(this)">
+                    <img id="image-preview" src="{{ banner.image.url }}" alt="Banner Image" class="img-fluid" style="max-width: 100px; max-height: 100px;">
+                </div>
+                 <div class="form-group">
+                     <label for="category">Category:</label>
+                     <select name="category1" class="form-control category-select required-field" oninput="logBannercategory(this.value)" {% if banner.link %} disabled {% endif %}>
+                         <option value="" selected>Select a category</option>
+                         {% for category in categories %}
+                         {% if has_parent %}
+                         <option  value="{{ category.id }}" {% if has_parent.id == category.id %} selected {% endif  %} >{{ category.name }}</option>
+                         {% else %}
+                         <option  value="{{ category.id }}" {% if banner.category and banner.category.id == category.id %} selected {% endif  %}>{{ category.name }}</option>
+                         {% endif %}
+                         {% endfor %}
+                     </select>
+                 </div>
+                 <div class="form-group">
+                     <label for="title">Title:</label>
+                     <!-- <p>{{has_parent.id}}</p> -->
+                     <input type="text" name="title" id="title" class="form-control" value="{{ banner.title }}">
+                 </div>
+                 <div class="form-group">
+                    <label for="active">Active:</label>
+                    <input type="checkbox" class="form-control h-auto w-auto" name="active" id="active" {% if banner.active %}checked{% endif %}>
+                 </div>
+             </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="image">Logo:</label>
+                    <input type="file" name="logo" id="image-input" class="form-control" style="margin-bottom: 10px;" onchange="previewImagetwo(this)">
+                    {% if banner.logo %}
+                    <img id="image-preview-logo" src="{{ banner.logo.url }}" alt="Logo Image" class="img-fluid" style="max-width: 100px; max-height: 100px;">
+                    {% else %}
+                    <span>No logo uploaded</span>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="sub_category">Child Categories:</label>
+                    <select name="sub_category1" class="form-control sub-category-select" {% if banner.link %} disabled {% endif %}>
+                        <option value="">Select a subcategory</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="title" class="col-sm-2 col-form-label">Link:</label>
+                    <input type="text" name="link" id="Link"  class="form-control required-field"  value="{{ banner.link }}" oninput="logBannerLink(this.value)" {% if banner.category %} disabled {% endif %}  {% if banner.has_parent %} disabled {% endif %}>
+                </div>
+            </div>
+        </div>
+<script>
+            // Initial log
+            console.log("Script is running!");
+
+            // Function to log changes and set the values for condition
+            function logBannerLink(value) {
+                console.log("Updated Banner Link:", value);
+                var categorySelect = document.querySelector('.category-select');
+                var linkInput = document.getElementById('Link');
+                var subcategoryselect = document.querySelector('.sub-category-select');
+
+
+                // Set the condition values based on whether there's a value
+                categoryValue = categorySelect.value !== '';
+                logBannerLinkValue = value !== '';
+
+                // Disable/enable the category select based on the condition
+                categorySelect.disabled = logBannerLinkValue;
+                subcategoryselect.disabled = logBannerLinkValue;
+
+
+                // Disable/enable the link input based on the condition
+                linkInput.disabled = categoryValue;
+            }
+
+            // Call the function initially with the current value
+            // logBannerLink("{{ banner.Link }}");
+        </script>
+
+
+            <script>
+
+
+                // Function to log changes and set the values for condition
+                function logBannercategory(value) {
+                    console.log("Updated category value:", value);
+
+                    var linkInput = document.getElementById('Link');
+
+                    // Disable/enable the link input based on the condition
+                    linkInput.disabled = value !== '';
+                }
+            </script>
+
+<script>
+    document.getElementById('edit-banner-form').addEventListener('submit', function (event) {
+        // Select elements with the required-field class
+        var requiredFields = document.querySelectorAll('.required-field');
+        var fieldHasValue = false;
+
+        // Check if at least one field has a value
+        requiredFields.forEach(function (field) {
+            if (field.value.trim() !== '') {
+                fieldHasValue = true;
+            }
+        });
+
+        if (!fieldHasValue) {
+            event.preventDefault();
+            alert('Please provide either a link or select a category.');
+        }
+    });
+</script>
+
+
+
+        {% block form_actions %}
+            <div class="form-actions">
+                <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Save Changes</button>
+            </div>
+        {% endblock form_actions %}
+    </form>
+</div>
+
+<script>
+    function previewImage(input) {
+        var preview = document.getElementById('image-preview');
+        var file = input.files[0];
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+            preview.src = reader.result;
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = "{{ banner.image.url }}";
+        }
+    }
+
+    function previewImagetwo(input) {
+        var preview = document.getElementById('image-preview-logo');
+        var file = input.files[0];
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+            preview.src = reader.result;
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            // Check if banner.logo is not None before accessing its url attribute
+            {% if banner.logo %}
+                preview.src = "{{ banner.logo.url }}";
+            {% else %}
+                preview.src = ""; // or provide a default image source if needed
+            {% endif %}
+        }
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+        // Function to perform the category dropdown change action
+        function handleCategoryChange() {
+            var parentCategoryId = $('.category-select[name="category1"]').val();
+            var subCategorySelect = $('.sub-category-select');
+
+            if (parentCategoryId) {
+                $.ajax({
+                    url: '{% url "get_child_categories" %}',
+                    method: 'GET',
+                    data: {'parent_category_id': parentCategoryId},
+                    success: function (data) {
+                        subCategorySelect.empty();
+
+                        if (data.length === 0) {
+                            subCategorySelect.append('<option value="">No subcategory available</option>');
+                        } else {
+                            subCategorySelect.append('<option value="">Select a subcategory</option>');
+                            for (var i = 0; i < data.length; i++) {
+                                subCategorySelect.append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                            }
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error fetching child categories:', error);
+                    }
+                });
+            } else {
+                subCategorySelect.empty();
+                subCategorySelect.append('<option value="">Select a subcategory</option>');
+            }
+        }
+
+        // Call the function on page load
+        handleCategoryChange();
+
+        // Attach the function to the change event of the category dropdown
+        $('.category-select[name="category1"]').on('change', handleCategoryChange);
+    });
+</script>
+
+
+
+
+{% endblock %}

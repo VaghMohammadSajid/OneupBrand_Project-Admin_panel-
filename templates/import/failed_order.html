@@ -1,0 +1,62 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Bulk Product Upload" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Bulk Product Upload" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block content %}
+
+  
+    
+    
+   
+   
+    
+   
+    
+   
+    
+
+  
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            
+         
+            <th scope="col">Order Id</th>
+            <th scope="col">Failed Time</th>
+            <th scope="col">Trace back</th>
+            
+            
+          </tr>
+        </thead>
+        <tbody>
+            {% for single in order %}
+          <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td>{{single.order_number}}</td>
+            <td>{{single.order_failed_time}}</td>
+            <td>{{single.order_failed_trace_back}}</td>
+          </tr>
+         {% endfor %}
+        </tbody>
+      </table>
+    
+
+
+
+      {% endblock %}

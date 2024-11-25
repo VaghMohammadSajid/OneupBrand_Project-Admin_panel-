@@ -1,0 +1,122 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Edit" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'admin-list' %}">{% trans "Admin List" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Edit" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+    <div class="page-header">
+        <h1>Update Admin Info {% block headertext %}{% endblock %}</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div class="table-header mr-3 ml-3">
+        <h3><i class="fas fa-user"></i> {% trans "Update Admin Info" %}</h3>
+    </div>
+        <form method="post">
+                    {% csrf_token %}
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_title">Email:<span style="color: red; font-size: small;">*</span></label>
+                            <input type="text" class="form-control" id="email" name="email" value="{{ admin_user.email }}">
+                            <span class="error-message" style="color: red;">{{ email_error }}</span>
+                        </div>
+                        <div class="form-group">
+                        <label for="id_title">Last Name:<span style="color: red; font-size: small;">*</span></label>
+                        <input type="text" class="form-control" id="last_name" name="last_name"
+                               value="{{ admin_user.last_name }}">
+                        <span class="error-message" style="color: red;">{{ last_name_error }}</span>
+                    </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_title">First Name:<span style="color: red; font-size: small;">*</span></label>
+                            <input type="text" class="form-control" id="first_name" name="first_name"
+                                   value="{{ admin_user.first_name }}">
+                            <span class="error-message" style="color: red;">{{ first_name_error }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_title">select role<span style="color: red; font-size: small;">*</span></label>
+                            <select class="form-control" name="role" id="">
+                                {% for  i in all_role %}
+                                {% if i.id == current_role.id %}
+                                <option value="{{i.id}}" selected >{{i.role_name}} </option>
+                                {% else %}
+
+                                <option value="{{i.id}}">{{i.role_name}}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                {% block form_actions %}
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;"
+                               value="Edit">
+                    </div>
+                </div>
+                {% endblock form_actions %}
+                {% if search_result %}
+                <h1> {{ search_result }}</h1>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    <body>
+        <div class="table-responsive">
+
+
+        <!-- <table class="table table-striped table-hover table-bordered">
+            <thead style="background-color: #230BB3 !important;color: #fff;">
+            <tr>
+
+                <th style="font-weight: normal;">S.No</th>
+                <th style="font-weight: normal;">Role_name</th>
+                <th style="font-weight: normal;">Deny</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in all_role %}
+            <form action="/role/change-role/" method="post">
+                {% csrf_token %}
+                <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">{{i.url_name}}</td>
+
+                        {% if i.id in user_all_role %}
+                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><input type="checkbox" name="on_url" value="{{i.id}}" checked ></td>
+
+                        {% else %}
+                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><input type="checkbox" value="{{i.id}}" name="on_url" ></td>
+                                {% endif %}
+
+
+                    </tr>
+
+                    {% endfor %}
+                <input type="text" hidden name="user" value="{{admin_user.id}}" id="">
+                </tbody>
+            </table>
+            <button type="submit" class="btn mb-5" style="background-color: #230BB3 !important; color: #fff;">Save</button>
+        </form>
+    </div> -->
+        {% endblock %}

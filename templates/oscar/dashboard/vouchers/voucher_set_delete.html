@@ -1,0 +1,40 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {% blocktrans with name=voucher_set.voucher.name %}Delete voucher set '{{ name }}'?{% endblocktrans %} | {% trans "Voucher sets" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'voucher-sets' %}">{% trans "Voucher sets" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:voucher-set-detail' pk=voucher_set.voucher.pk %}">{{ voucher_set.voucher.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Delete?" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block headertext %}
+    {% blocktrans with name=voucher_set.voucher.name count=voucher_set.voucher.count %}Delete voucher set '{{ name }}' and its {{ count }} vouchers?{% endblocktrans %}
+{% endblock %}
+
+{% block dashboard_content %}
+    <div class="table-header">
+        <h2>{% trans "Voucher set details" %}</h2>
+    </div>
+    <div class="card card-body bg-light">
+        {% include "oscar/dashboard/vouchers/partials/voucher_set_details_table.html" %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" data-loading-text="{% trans 'Deleting...' %}" class="btn btn-danger">{% trans 'Delete' %}</button> {% trans "or" %}
+                <a class="btn btn-secondary" href="{% url 'voucher-sets' %}">{% trans "Cancel" %}</a>
+            </div>
+        </form>
+    </div>
+{% endblock dashboard_content %}

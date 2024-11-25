@@ -1,0 +1,126 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Bulk Product Upload" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Bulk Product Upload" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block content %}
+
+  
+    
+    
+   
+   
+    
+   
+    
+   
+    
+
+<div class="containerr" style="overflow: auto;">
+  <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">UPC</th>
+            <th scope="col">title</th>
+         
+            <th scope="col">description</th>
+            <th scope="col">Specification</th>
+            <th scope="col">image</th>
+            <th scope="col">product_type</th>
+            <th scope="col">is_public</th>
+            <th scope="col">is_discountable</th>
+            <th scope="col">best_seller</th>
+            <th scope="col">standard_rate</th>
+            <th scope="col">num_in_stock</th>
+            <th scope="col">brand</th>
+            <th scope="col">first_category</th>
+            <th scope="col">structure</th>
+            <th scope="col">attributes</th>
+            <th scope="col">recommended_products</th>
+            <th scope="col">Parent_UPC</th>
+          
+            <th scope="col">length</th>
+            <th scope="col">width</th>
+            <th scope="col">height</th>
+            <th scope="col">weight</th>
+            <th scope="col">supplier</th>
+            <th scope="col">low_stock_threshold</th>
+            <th scope="col">mrp</th>
+            <th scope="col">discount</th>
+            <th scope="col">price</th>
+            <th scope="col">gst_rate</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+            {% for single in child %}
+          <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td>{{single.upc}}</td>
+            <td>{{single.title}}</td>
+    
+            <td>{{single.description}}</td>
+            <td>{{single.Specification}}</td>
+            <td>{{single.image}}</td>
+            <td>{{single.product_type}}</td>
+            <td>{{single.is_public}}</td>
+            <td>{{single.is_discountable}}</td>
+            <td>{{single.best_seller}}</td>
+            <td>{{single.standard_rate}}</td>
+            <td>{{single.num_in_stock}}</td>
+            <td>{{single.brand}}</td>
+            <td>{{single.first_category}}</td>
+            <td>{{single.structure}}</td>
+            <td>{{single.attributes}}</td>
+            <td>{{single.recommended_products}}</td>
+            <td>{{single.Parent_UPC}}</td>
+           
+            <td>{{single.length}}</td>
+            <td>{{single.width}}</td>
+            <td>{{single.height}}</td>
+            <td>{{single.weight}}</td>
+            <td>{{single.supplier}}</td>
+            <td>{{single.low_stock_threshold}}</td>
+            <td>{{single.mrp}}</td>
+            <td>{{single.discount}}</td>
+            <td>{{single.price}}</td>
+            <td>{{single.gst_rate}}</td>
+
+          </tr>
+         {% endfor %}
+        </tbody>
+      </table>
+
+      </div>
+    
+      <style>
+        .containerr {
+          overflow-y: hidden;
+          /* white-space: nowrap;  */
+
+            overflow: auto;
+            height: 600px; 
+        }
+      
+       
+        
+      </style>
+    
+
+
+      {% endblock %}

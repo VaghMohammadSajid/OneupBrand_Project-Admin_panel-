@@ -1,0 +1,29 @@
+{% extends 'oscar/dashboard/reports/index.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block report %}
+<table class="table table-striped table-bordered table-hover">
+    <thead style="background-color: #230BB3 !important;color: #fff;">
+        <tr>
+            <th style="font-weight: normal;">{% trans "S.No" %}</th>
+            <th style="font-weight: normal;">{% trans "Product" %}</th>
+            <th style="font-weight: normal;">{% trans "Views" %}</th>
+            <th style="font-weight: normal;">{% trans "Basket Additions" %}</th>
+            <th style="font-weight: normal;">{% trans "Purchases" %}</th>
+        </tr>
+    </thead>
+    {% for product in objects %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>
+        <a style="color: #230BB3 !important;" href="{% url 'dashboard:catalogue-product' product.product.id %}">{{ product.product }}</a>
+        </td>
+        <td>{{ product.num_views }}</td>
+        <td>{{ product.num_basket_additions }}</td>
+        <td>{{ product.num_purchases }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% include "oscar/dashboard/partials/pagination.html" %}
+{% endblock %}

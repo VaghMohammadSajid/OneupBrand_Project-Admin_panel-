@@ -1,0 +1,88 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Newsletter Template List" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;"
+                                           href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item">{% trans "Newsletter Templates List " %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <form method="post" action="{% url 'create-template' %}">
+            {% csrf_token %}
+            {{ create_template_form.as_p }}
+            <button type="submit" name="action" class="btn float-right" style="background-color: #230BB3 !important; color: #fff;">
+                <i class="fas fa-plus-circle"></i> Add New
+            </button>
+        </form>
+        <h1>Newsletter Templates List {% block headertext %}{% endblock %}</h1>
+    </div>
+
+{% endblock %}
+
+{% block content %}
+    <div class="table-header">
+        <h3><i class="fas fa-solid fa-envelope"></i> {% trans "Newsletter Templates" %}</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+            <thead style="background-color: #230BB3 !important; color: #fff;">
+            <tr>
+                <th style="font-weight: normal;">S.No</th>
+                <th style="font-weight: normal;">Template Subject</th>
+                <th style="font-weight: normal;">Status</th>
+                <th style="font-weight: normal;">Date Updates</th>
+                <th style="font-weight: normal;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for template in newsletter_template_subscribers %}
+                <form method="post" action="{% url 'template-active' template.id %}">
+                    {% csrf_token %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ template.subject }}</td>
+                        <td>
+                            <button type="submit" name="action" value="{{ template.id }}"
+                                    class="btn {% if template.status == 'Inactive' %}btn-danger{% else %}btn-success{% endif %} btn-sm">
+                                {% if template.status == 'Active' %}
+                                    Active
+                                {% else %}
+                                    Inactive
+                                {% endif %}
+                            </button>
+
+                        </td>
+                        <td>{{ template.current_date|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'edit-template' template.id %}" class="btn btn-sm"
+                               style="background-color: #230BB3 !important; color: #fff;"><i
+                                    class="fas fa-edit"></i></a>
+                            <a href="{% url 'delete-template' template.id %}" class="btn btn-danger btn-sm"
+                               onclick="return confirm('Are you sure you want to delete?')"><i
+                                    class="fas fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                </form>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No Template found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

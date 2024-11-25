@@ -1,0 +1,92 @@
+{% extends "oscar/layout.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans 'Login or register' %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ homepage_url }}">{% trans 'Home' %}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans 'Login or register' %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+<div class="login-background">
+
+
+
+            <!-- <div class="login-text show-panel" id="text-panel">
+            <h1>Have your account?</h1>
+            <h3>should login first</h3>
+    <button onclick="myFunction()">Login</button>
+</div> -->
+
+            <div class="Register-text" id="text-panel1">
+            <!-- <h3>Welcome to</h3>
+            <h1>GODIRECTT</h1> -->
+    <!-- <button onclick="myFunction1()">Register Now</button> -->
+</div>
+
+
+
+   <div class="white-box" style="background-color: whitesmoke;" id="whitepanel">
+
+    <div class="row">
+        <div class="col-sm-12 login_form" id="myDIV1">
+            <form id="login_form" action="{{ request.get_full_path }}" method="post" class="card card-body " >
+                <h2>{% trans 'Login' %}</h2>
+                {% csrf_token %}
+                {% include "oscar/partials/form_fields.html" with form=login_form %}
+                <p><a href="{% url 'password-reset' %}">{% trans "I've forgotten my password" %}</a></p>
+                <button name="login_submit" type="submit" value="Login" class="btn" style="background-color: #230BB3 !important;color: #fff;" data-loading-text="{% trans "Logging in..." %}" >{% trans 'Login' %}</button>
+
+            </form>
+        </div>
+        <!-- <div class="col-sm-12 register_form show-panel" id="myDIV">
+            <form id="register_form" action="{{ request.get_full_path }}" method="post" class="card card-body">
+                <h2>{% trans 'Register' %}</h2>
+                {% csrf_token %}
+                {% include "oscar/partials/form_fields.html" with form=registration_form %}
+                <button name="registration_submit" type="submit" value="Register" class="btn btn-lg btn-primary button" data-loading-text="{% trans 'Registering...' %}"  >{% trans 'Register' %}</button>
+
+            </form>
+        </div> -->
+    </div>
+
+</div>
+
+</div>
+    <!-- <script>
+
+         var element3 = document.getElementById("whitepanel"); //right-log
+        var element = document.getElementById("myDIV"); // login btn
+        var element1 = document.getElementById("myDIV1");  //register btn
+        var element4 = document.getElementById("text-panel"); // login text panel
+        var element5 = document.getElementById("text-panel1");  //register text panel
+        function myFunction() {
+            element.classList.add("show-panel");
+            element1.classList.remove("show-panel");
+            element4.classList.add("show-panel");
+            element5.classList.remove("show-panel");
+            element3.classList.remove("right-log");
+
+        }
+        function myFunction1() {
+            element1.classList.add("show-panel");
+            element.classList.remove("show-panel");
+            element4.classList.remove("show-panel");
+            element5.classList.add("show-panel");
+            element3.classList.add("right-log");
+        }
+    </script> -->
+{% endblock content %}
+
+

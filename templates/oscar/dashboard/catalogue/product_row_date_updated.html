@@ -1,0 +1,8 @@
+{% load django_tables2 %}
+{% load form_tags %}
+{% load i18n %}
+{% if record.date_updated %}
+    {{ record.date_updated|date:"d/m/Y H:i" }}
+{% else %}
+    {{ _("Unknown") }}
+{% endif %}

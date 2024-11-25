@@ -1,0 +1,475 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+{{ title }} {% trans "Add Voucher Set" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a style="color: #230BB3;"
+                                       href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a style="color: #230BB3;"
+                                       href="{% url 'voucher-sets' %}">{% trans "Voucher Sets" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Add" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+{% block header %}
+<div class="page-header">
+    <h1>Create Voucher Set {% block headertext %}{% endblock %}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="table-header mr-3 ml-3">
+    <h2><i class="fas fa-money-bill"></i>
+        {% trans "Voucher Set" %}
+    </h2>
+</div>
+<div class="card card-body mr-3 ml-3 mb-3">
+    <form method="post" >
+    {% csrf_token %}
+    <!-- Voucher Name Dropdown -->
+         <div class="row pr-3 pl-3">
+             <div class="col-md-6">
+                 <div class="form-group">
+                    <label for="start_date">Start Datetime<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="datetime-local" placeholder="yyyy-mm-ddTHH:MM" name="start_date" id="start_date" value="{{ start_date }}">
+                </div>
+                 <div class="form-group">
+                    <label for="number_of_voucher">Number Of Vouchers<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Enter Length of code" value="12" name="number_of_voucher" id="number_of_voucher" required>
+                </div>
+                 
+                <div class="form-group">
+                    <label for="voucher_type">Select Voucher Type<span style="color: red; font-size: small;">*</span></label>
+                    <select required class="form-control" id="voucher_type" onchange="select_changed()" name="voucher_type">
+                        <option value="">-- Select Voucher Type --</option>
+                        {% for voucher_type in voucher_types %}
+                        <option value="{{ voucher_type.id }}">{{ voucher_type.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+               
+                    <div class="form-group">
+                        <label for="category">Included Categories</label>
+                        <select class="form-control" id="category" placeholder="Select Category" onchange="categoryFunc()"
+                                name="category" multiple>
+
+                            {% for single_category in all_category %}
+                            <option value="{{single_category.id}}">{{single_category.full_name}}</option>
+
+                            {% endfor %}
+                        </select>
+                    </div>
+               
+               
+                    <div class="form-group">
+                    <label for="Attribute_name">Attribute Name</label>
+                    <select class="form-control" id="Attribute_name" multiple="true" onchange="myfunc()" name="brands">
+
+                        {% for single_attribute in all_attributes %}
+                        <option value="{{single_attribute.id}}">{{single_attribute}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+              
+              
+                    <div class="form-group">
+                        <label for="Attribute_value">Attribute Value</label>
+                        <select class="form-control" id="Attribute_value" multiple name="attr_value">
+
+
+                        </select>
+                    </div>
+            
+                
+<!-- 
+                 <div class="form-group">
+                     <label for="shipin_check">Is Fixed Shipping<span style="color: red; font-size: small;">*</span></label>
+                     <input type="checkbox" class="form-control w-auto h-auto" name="shipin_check" id="shipin_check">
+                 </div> -->
+                 <!-- <div class="form-group">
+                     <label for="Shipping_charge">Shipping Charge<span style="color: red; font-size: small;">*</span></label>
+                     <input class="form-control" type="text" placeholder="Enter Length of code" value="0" name="Shipping_charge" id="Shipping_charge" required>
+                 </div> -->
+                 
+                 <!-- Voucher Type Dropdown -->
+                
+                 <!-- Client Details Dropdown -->
+                <div class="form-group">
+                    <label for="user">Select Client<span style="color: red; font-size: small;">*</span></label>
+                    <select required class="form-control" id="user" name="user"
+                            oninvalid="this.setCustomValidity('Please Select The User!')"
+                            oninput="this.setCustomValidity('')">
+                        <option value="">-- Select Client --</option>
+                        {% for user in users %}
+                        <option value="{{ user.pk }}">{{ user.first_name }} {{ user.last_name }} - {{ user.username }} - {{user.client.company_name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+             </div>
+             <div class="col-md-6">
+                 <!-- <div class="form-group">
+                    <label for="length_of_code">Length of Code<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Enter Length of code" value="12" name="length_of_code"
+                           id="length_of_code" required>
+                 </div> -->
+                 <div class="form-group">
+                    <label for="end_date">End Datetime<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="datetime-local" placeholder="yyyy-mm-ddTHH:MM" name="end_date" id="end_date" value="{{ end_date }}">
+                </div>
+                 <div id="amount_type_div" class="form-group">
+                    <label for="voucher_type">Select Value Type<span style="color: red; font-size: small;">*</span></label>
+                    <select required class="form-control" onchange="clickCoupon()" id="amount_type" name="amount_type">
+                        <option value="Fixed price">Voucher</option>
+                        <option value="Percentage">Discount - Percentage</option>
+                        <option value="Absolute">Discount - Fixed</option>
+
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label for="voucher_amount">Voucher Value<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Enter Voucher Value" value="" name="voucher_amount"
+                           id="voucher_amount" required>
+                 </div>
+                 <!-- <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea class="form-control h-auto" name="description" id="description" rows="3" cols="50"></textarea>
+                 </div> -->
+                 <div class="form-group">
+                    <label for="is_club">Is Clubable<span style="color: red; font-size: small;">*</span></label>
+                    <input  type="checkbox" class="form-control w-auto h-auto" name="is_club" id="is_club" >
+                 </div>
+                 <div id="club_no_div" class="form-group">
+                    <label for="number_club">How Many are clubable<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Enter How Many are clubable" value="0" name="number_club"
+                           id="number_club" required>
+                 </div>
+                 <!-- <div class="form-group">
+                    <label for="is_shipping_included">Shipping charge included or not<span style="color: red; font-size: small;">*</span></label>
+                    <input  type="checkbox" class="form-control w-auto h-auto" name="is_shipping_included" id="is_shipping_included" >
+                 </div> -->
+                 <div id="shipping_charge_div" class="form-group">
+                    <label for="shipping_type">Select Shipping<span style="color: red; font-size: small;">*</span></label>
+                    <select required class="form-control" id="shipping_type" name="shipping_type" onchange="select_fixed()">
+                        <option value="">-- Select Shipping --</option>
+                       
+                    </select>
+                </div>
+              
+                <div class="form-group">
+                    <label id="fixed_amount_la" style="display: none;" for="fixed_amount">Shipping Amount<span style="color: red; font-size: small;">*</span></label>
+                    <input id="fixed_amount" placeholder="Enter Shipping Amount" class="form-control" style="display: none;" name="fixed_amount" type="text">
+
+                </div>
+                <div class="form-group">
+                    <label for="null_value"></label>
+                    <input class="form-control" id="null_value" hidden>
+               </div>
+                
+             </div>
+         </div>
+        {% block form_actions %}
+
+        <div class="fixed-actions-group">
+            <div class="form-actions">
+                <div class="float-left">
+                    {% block form_actions_buttons %}
+                    <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Save
+                    </button>
+                    {% endblock %}
+                </div>
+                <a class="btn btn-secondary ml-1" href="{% url 'voucher-sets' %}">{% trans "Cancel" %}</a>
+            </div>
+        </div>
+        {% endblock form_actions %}
+</form>
+</div>
+
+<script  >
+
+    const cateSelect = document.getElementById("category");
+    
+                var selected_values_cate = []
+                for (var i=0;i<cateSelect.options.length;i++)
+                {
+                    if(cateSelect.options[i].selected)
+                    {
+                        selected_values_cate.push(cateSelect.options[i].value)
+                    }
+                    console.log(selected_values_cate,"cate");
+    
+                }
+                if (selected_values_cate.length > 0)
+                {
+                fetch("/voucher_type/get-brand-cate/", {
+                    method: 'POST', // Specify the request method
+                    headers: {
+                        'Content-Type': 'application/json' // Specify the content type
+                    },
+                    body: JSON.stringify({"cate":selected_values_cate}) // Include any data you want to send in the request body
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                   console.log(data);
+                   const multiSelect = document.getElementById("Attribute_name");
+                   multiSelect.innerHTML = '';
+                   console.log(data['delivered']);
+                   for(var i=0; i < data['delivered'].length;i++)
+                   {
+    
+                    var option = document.createElement("option");
+                    option.text = data['delivered'][i][0];
+                    option.value = data['delivered'][i][1];
+                    multiSelect.appendChild(option);
+                   }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+                }
+            function categoryFunc()
+            {
+                const cateSelect = document.getElementById("category");
+                var selected_values_cate = []
+                for (var i=0;i<cateSelect.options.length;i++)
+                {
+                    if(cateSelect.options[i].selected)
+                    {
+                        selected_values_cate.push(cateSelect.options[i].value)
+                    }
+                    console.log(selected_values_cate,"cate");
+    
+                }
+                fetch("/voucher_type/get-brand-cate/", {
+                    method: 'POST', // Specify the request method
+                    headers: {
+                        'Content-Type': 'application/json' // Specify the content type
+                    },
+                    body: JSON.stringify({"cate":selected_values_cate}) // Include any data you want to send in the request body
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                   console.log(data);
+                   const multiSelect = document.getElementById("Attribute_name");
+                   multiSelect.innerHTML = '';
+                   console.log(data['delivered']);
+                   for(var i=0; i < data['delivered'].length;i++)
+                   {
+    
+                    var option = document.createElement("option");
+                    option.text = data['delivered'][i][0];
+                    option.value = data['delivered'][i][1];
+                    multiSelect.appendChild(option);
+                   }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+    
+    
+    
+    
+    
+            function myfunc()
+            {
+                const multiSelect = document.getElementById("Attribute_name");
+                var selected_values = []
+                for (var i=0;i<multiSelect.options.length;i++)
+                {
+                    if(multiSelect.options[i].selected)
+                    {
+                        selected_values.push(multiSelect.options[i].value)
+                    }
+                    console.log(selected_values)
+    
+                }
+                const cateSelect = document.getElementById("category");
+                var selected_values_cate = []
+                for (var i=0;i<cateSelect.options.length;i++)
+                {
+                    if(cateSelect.options[i].selected)
+                    {
+                        selected_values_cate.push(cateSelect.options[i].value)
+                    }
+                    console.log(selected_values_cate,"cate");
+                    var domainName = "https://" + window.location.hostname;
+                    console.log(domainName);
+                }
+                fetch("/voucher_type/get-brand/", {
+                    method: 'POST', // Specify the request method
+                    headers: {
+                        'Content-Type': 'application/json' // Specify the content type
+                    },
+                    body: JSON.stringify({"brand":selected_values,"cate":selected_values_cate}) // Include any data you want to send in the request body
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                   console.log(data);
+    
+                   const value_select = document.getElementById("Attribute_value");
+                   value_select.innerHTML = '';
+                   for(var i=0; i < data['data'].length;i++)
+                   {
+    
+                    var option = document.createElement("option");
+                    option.text = data['data'][i][0];
+                    option.value = data['data'][i][0];
+                    value_select.appendChild(option);
+                   }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+    
+            }
+    
+    
+    
+        </script>
+    
+<script >
+  function select_changed()
+  {
+console.log("calling");
+var selectElement = document.getElementById('voucher_type');
+var selectedValue = selectElement.value;
+
+// Do something with the selected value
+console.log('Selected voucher type:', selectedValue);
+var voucherTypeSelect = document.getElementById('shipping_type');
+if (selectedValue == "1" || selectedValue == "4")
+{
+    voucherTypeSelect.innerHTML = ''
+    var option = document.createElement('option');
+    var option1 = document.createElement('option');
+    var option2 = document.createElement('option');
+            
+            
+            option1.value = "1 ";
+            option1.text = "Payable ";
+            voucherTypeSelect.appendChild(option1);
+            option2.value = "2";
+            option2.text = "Free";
+            voucherTypeSelect.appendChild(option2);
+            option.value = "0";
+            option.text = "Fixed";
+            voucherTypeSelect.appendChild(option);
+}
+else{
+    voucherTypeSelect.innerHTML = ''
+    var option = document.createElement('option');
+    var option1 = document.createElement('option');
+    var option2 = document.createElement('option');
+            
+            option1.value = "1 ";
+            option1.text = "Payable ";
+            voucherTypeSelect.appendChild(option1);
+            option2.value = "2";
+            option2.text = "Inclusive";
+            voucherTypeSelect.appendChild(option2);
+            option.value = "0";
+            option.text = "Fixed";
+            voucherTypeSelect.appendChild(option);
+
+}
+  }
+  function select_fixed(){
+    var voucherTypeSelect = document.getElementById('shipping_type');
+    console.log(voucherTypeSelect.value);
+    if (voucherTypeSelect.value == 0)
+    {
+        var voucherTypeSelect2 = document.getElementById('fixed_amount_la').style.display = 'block';
+        var voucherTypeSelect3 = document.getElementById('fixed_amount').style.display = 'block';
+    }
+    else{
+        var voucherTypeSelect2 = document.getElementById('fixed_amount_la').style.display = 'none';
+        var voucherTypeSelect3 = document.getElementById('fixed_amount').style.display = 'none';
+    }
+  }
+</script>
+
+<script>
+    function clickCoupon()
+    {
+console.log("nice");
+const value_type = document.getElementById("amount_type");
+
+if(value_type.value == 'Percentage' || value_type.value == "Absolute")
+{
+    const voucher_type = document.getElementById("voucher_type");
+    const shipi = document.getElementById("shipping_charge_div");
+    if (shipi)
+{
+    shipi.remove()
+}
+    
+    
+    voucher_type.disabled = true;
+    const minimum_input = `
+            <div id="min_input_div" class="form-group">
+                <label for="min_input"> Minimum Value<span style="color: red; font-size: small;">*</span></label>
+                <input type="number" class="form-control" id="min_input" name="min_input" placeholder="Enter The Value" required />
+            </div>
+        `;
+    const max_input = `
+            <div id="max_input_div" class="form-group">
+                <label for="max_input"> Max Value<span style="color: red; font-size: small;">*</span></label>
+                <input type="number" class="form-control" id="max_input" name="max_input" placeholder="Enter The Value" required />
+            </div>
+        `;
+        const max_input_div = document.getElementById("max_input_div");
+    if(max_input_div)
+{
+    max_input_div.remove()
+}
+const min_input_div = document.getElementById("min_input_div");
+    if(min_input_div)
+{
+    min_input_div.remove()
+}
+        const amount_type_div = document.getElementById("amount_type_div");
+        amount_type_div.insertAdjacentHTML('afterend', minimum_input);
+        amount_type_div.insertAdjacentHTML('afterend',max_input);
+}
+else{
+    const voucher_type = document.getElementById("voucher_type");
+    voucher_type.disabled = false;
+    const max_input = document.getElementById("max_input_div");
+    if(max_input)
+{
+    max_input.remove()
+}
+const min_input_div = document.getElementById("min_input_div");
+    if(min_input_div)
+{
+    min_input_div.remove()
+}
+const shiping_div = `<div id="shipping_charge_div" class="form-group">
+                    <label for="shipping_type">Select Shipping<span style="color: red; font-size: small;">*</span></label>
+                    <select required class="form-control" id="shipping_type" name="shipping_type" onchange="select_fixed()">
+                        <option value="">-- Select Shipping --</option>
+                       
+                    </select>
+                </div>`
+                const club_div = document.getElementById("club_no_div");
+                club_div.insertAdjacentHTML('afterend', shiping_div);
+
+}
+
+
+    }
+</script>
+
+{% endblock %}

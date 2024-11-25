@@ -1,0 +1,94 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Create Template" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'Manage-NewsLetter-Template' %}">{% trans "Newsletter Templates List " %}</a>
+            </li>
+            <li class="breadcrumb-item">{% trans "Create Newsletter Template" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>Create Newsletter Template {% block headertext %}{% endblock %}</h1>
+    </div>
+{% endblock %}
+{% block content %}
+<div class="table-header mr-3 ml-3">
+    <h3><i class="fas fa-solid fa-envelope"></i> {% trans "Create Newsletter Template" %}</h3>
+</div>
+<form method="POST" action="{% url 'create-template' %}">
+    {% csrf_token %}
+    <!-- Existing fields -->
+    <div class="card card-body mr-3 ml-3">
+        <div class="row pt-1 pr-3 pl-3 pb-3">
+            <div class="col-md-6">
+<!--                <div class="form-group">-->
+<!--                    {{ create_template_form.from_email.label}}:<span style="color: red; font-size: large;">*</span>-->
+<!--                    {{ create_template_form.from_email }}-->
+<!--                </div>-->
+                 <div class="form-group">
+                    {{ create_template_form.subject.label_tag}}<span style="color: red; font-size: large;">*</span>
+                    {{ create_template_form.subject }}
+                 </div>
+            </div>
+            <div class="col-md-6">
+<!--                <div class="form-group">-->
+<!--                    {{ create_template_form.reply_to_email.label}}:<span style="color: red; font-size: large;">*</span>-->
+<!--                    {{ create_template_form.reply_to_email }}-->
+<!--                </div>-->
+                <div class="form-group">
+                    {{ create_template_form.status.label_tag}}
+                    {{ create_template_form.status }}
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    {{ create_template_form.message.label_tag}}<span style="color: red; font-size: large;">*</span>
+                    {{ create_template_form.message }}
+                </div>
+            </div>
+            <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Save</button>
+        </div>
+    </div>
+
+
+    {% if search_result %}
+    <h1> {{ search_result }}</h1>
+    {% endif %}
+
+</form>
+{# Include TinyMCE scripts and styles #}
+{{ form.media }}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    // jQuery-dependent TinyMCE initialization code
+    $(document).ready(function () {
+        tinymce.init({
+            selector: 'textarea',
+            cleanup_on_startup: true,  // 'True' should be 'true'
+            custom_undo_redo_levels: 20,
+            theme: 'silver',
+            plugins: 'textcolor save link image media preview codesample contextmenu table code lists fullscreen insertdatetime nonbreaking contextmenu directionality searchreplace wordcount visualblocks visualchars code fullscreen autolink lists charmap print hr anchor pagebreak',
+            toolbar1: 'fullscreen preview bold italic underline | fontselect fontsizeselect | forecolor backcolor | alignleft alignright aligncenter alignjustify | indent outdent bullist numlist table | link image media codesample',
+            toolbar2: 'visualblocks visualchars | charmap hr pagebreak nonbreaking anchor | code',
+            contextmenu: 'formats | link image',
+            menubar: true,
+            statusbar: true,
+            // Disable branding message, remove "Powered by TinyMCE"
+            branding: false
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Edit Template" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;"
+                    href="{% url 'Manage-NewsLetter-Template' %}">{% trans "Newsletter Templates List " %}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Edit Newsletter Template" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+    <div class="page-header">
+        <h1>Edit Newsletter Template{% block headertext %}{% endblock %}</h1>
+    </div>
+{% endblock %}
+{% block content %}
+<div class="table-header mr-3 ml-3">
+        <h3><i class="fas fa-solid fa-envelope"></i> {% trans "Edit Newsletter Template" %}</h3>
+    </div>
+        <form method="POST">
+            {% csrf_token %}
+            <!-- Existing fields -->
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+<!--                        <div class="form-group">-->
+<!--                            {{ template_form.from_email.label_tag }}<span style="color: red; font-size: large;">*</span>-->
+
+<!--                            <input class="form-control" name="from_email" readonly-->
+<!--                                   value="{{ template_user.from_email }}">-->
+<!--                        </div>-->
+                        <div class="form-group">
+                            {{ template_form.subject.label_tag }}<span style="color: red; font-size: large;">*</span>
+                            <input class="form-control mt-1" name="subject"
+                                   value="{{ template_user.subject }}">
+                        </div>
+                    </div>
+                     <div class="col-md-6">
+<!--                         <div class="form-group">-->
+<!--                             {{ template_form.reply_to_email.label_tag }}<span-->
+<!--                                 style="color: red; font-size: large;">*</span>-->
+<!--                             <input class="form-control" name="reply_to_email"-->
+<!--                                    value="{{ template_user.reply_to_email }}">-->
+<!--                         </div>-->
+                         <div class="form-group">
+                             <label for="status"> {{ template_form.status.label_tag }}<span style="color: red; font-size: large;">*</span></label>
+                                <select class="form-control mt-0" id="status" name="status">
+                                    <option value="{{ template_user.status }}"
+                                            {% if template_user.status == 'Active' %}selected{% endif %}>
+                                        Active
+                                    </option>
+                                    <option value="{{ template_user.status }}"
+                                            {% if template_user.status == 'Inactive' %}selected{% endif %}>
+                                        Inactive
+                                    </option>
+                                </select>
+                         </div>
+                     </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            {{ template_form.message.label_tag }}<span style="color: red; font-size: large;">*</span>
+                            <input class="form-control" style="height: 100px;" id="textarea" name="message"
+                                   value="{{ template_user.message }}">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Edit Newsletter</button>
+                </div>
+            </div>
+
+
+            {% if search_result %}
+                <h1> {{ search_result }}</h1>
+            {% endif %}
+
+        </form>
+        {# Include TinyMCE scripts and styles #}
+
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script>
+            // jQuery-dependent TinyMCE initialization code
+            $(document).ready(function () {
+                tinymce.init({
+                    selector: '#textarea',
+                    cleanup_on_startup: true,  // 'True' should be 'true'
+                    custom_undo_redo_levels: 20,
+                    theme: 'silver',
+                    plugins: 'textcolor save link image media preview codesample contextmenu table code lists fullscreen insertdatetime nonbreaking contextmenu directionality searchreplace wordcount visualblocks visualchars code fullscreen autolink lists charmap print hr anchor pagebreak',
+                    toolbar1: 'fullscreen preview bold italic underline | fontselect fontsizeselect | forecolor backcolor | alignleft alignright aligncenter alignjustify | indent outdent bullist numlist table | link image media codesample',
+                    toolbar2: 'visualblocks visualchars | charmap hr pagebreak nonbreaking anchor | code',
+                    contextmenu: 'formats | link image',
+                    menubar: true,
+                    statusbar: true,
+                    // Disable branding message, remove "Powered by TinyMCE"
+                    branding: false
+                });
+            });
+        </script>
+    </div>
+
+
+    </div>
+
+{% endblock %}

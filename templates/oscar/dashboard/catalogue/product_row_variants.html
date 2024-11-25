@@ -1,0 +1,8 @@
+{% extends "oscar/dashboard/catalogue/product_row_variants.html" %}
+{% load form_tags %}
+{% load i18n %}
+{% if record.is_standalone %}
+    -
+{% else %}
+    {{ record.children.count }}
+{% endif %}

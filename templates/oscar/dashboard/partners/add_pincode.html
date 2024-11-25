@@ -1,0 +1,38 @@
+{% extends 'oscar/dashboard/layout.html' %}
+
+{% block content %}
+<div class="table-header">
+  <h2>
+      
+    Pincode Form
+      
+  </h2>
+</div>
+<form action = "#" method = "POST" class="card card-body form-stacked" id="nameform" >
+    {% csrf_token %}
+
+    <div class="form-row">
+      <div class="col-md-4 mb-3">
+        <label for="validationTooltip01"> Enter Pincode</label>
+        <input type="text" class="form-control" id="validationTooltip01"  name='pincode'  placeholder="pincode" maxlength="6" onkeypress="return isNumberKey(event)" required>
+      </div>
+      
+    </div>
+    <div class="form-actions">
+    <button type="submit"  value="Add">Submit</button>
+    <button type="reset"  value="Add">Cancel</button>
+    </div>
+    </div>
+   
+  </form>
+
+  <script>
+    function isNumberKey(evt) {
+      var charCode = (evt.which) ? evt.which : evt.keyCode
+      if (charCode > 31 && (charCode < 48 || charCode > 57))
+        return false;
+      return true;
+    }
+    
+    </script>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'oscar/dashboard/layout.html' %}
+
+{% load currency_filters %}
+{% load i18n %}
+{% load static %}
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {{ title }} {% trans "Get Help" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'get-help-list' %}">{% trans "Get Help" %}</a></li>
+            <li class="breadcrumb-item">Details</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>Get Help Details{% block headertext %}{% endblock %}</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+<table class="table table-striped table-bordered">
+    <caption>
+        <h3>
+            <i class="fas fa-user"></i> {% trans "Get Help Details" %}
+        </h3>
+    </caption>
+    <tbody>
+    <tr>
+        <th>{% trans "First Name" %}</th>
+        <td>{{ get_details_data.first_name }}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Last Name" %}</th>
+        <td>{{ get_details_data.last_name }}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Email" %}</th>
+        <td>{{ get_details_data.email }}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Mobile No." %}</th>
+        <td>{{ get_details_data.phone_number }}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Message" %}</th>
+        <td>{{ get_details_data.message }}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Image" %}</th>
+        {% if get_details_data.image %}
+        <td>
+            <a href="#" data-original="{{ image.original.url }}">
+            <img src="{{ get_details_data.image.url }}" data-toggle="modal" data-target="#SearchModal" style="max-width: 100px; max-height: 80px;">
+        </a>
+        </td>
+        {% else %}
+        <td>-</td>
+        {% endif %}
+    </tr>
+    <!-- Advanced Search Modal -->
+                <div class="modal fade" id="SearchModal" tabindex="-1" role="dialog" aria-labelledby="SearchModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="SearchModalLabel">Image</h5>
+                                <button type="button" style="height:20px;" class="close tf-button style-1 w100" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-header">
+                                <img src="{{ get_details_data.image.url }}"
+                                    alt="Get Image" class="img-fluid" style="max-width: 100%; max-height: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JavaScript for Modal Handling -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const searchButton = document.querySelector('[data-target="#SearchModal"]');
+                        const searchModal = document.getElementById('SearchModal');
+                        const closeModalButton = searchModal.querySelector('.close');
+                        const cancelButton = searchModal.querySelector('.btn-secondary[data-dismiss="modal"]');
+
+                        // Show the modal when the trigger button is clicked
+                        searchButton.addEventListener('click', function () {
+                            $(searchModal).modal('show');
+                        });
+
+                        // Close modal when close button is clicked
+                        if (closeModalButton) {
+                            closeModalButton.addEventListener('click', function () {
+                                $(searchModal).modal('hide');
+                            });
+                        }
+
+                        // Close modal when Cancel button is clicked
+                        if (cancelButton) {
+                            cancelButton.addEventListener('click', function () {
+                                $(searchModal).modal('hide');
+                            });
+                        }
+                    });
+                </script>
+            <!-- End Advanced Search Modal -->
+    <tr>
+        <th>{% trans "Date Updated" %}</th>
+        <td>{{ get_details_data.created_at|date:"d/m/Y H:i" }}</td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="modal fade" id="product-image-modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title"></h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img class="img-fluid mx-auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    oscar.dashboard.product_lists.init();
+{% endblock onbodyload %}

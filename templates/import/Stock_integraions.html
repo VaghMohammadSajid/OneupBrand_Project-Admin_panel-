@@ -1,0 +1,89 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Stock Integrations" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item">{% trans "Stock Integrations" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>Stock Integrations {% block headertext %}{% endblock %}</h1>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+{% block search_products %}
+        <div class="table-header">
+            <h3><i class="fas fa-search"></i> {% trans "Search Products" %}</h3>
+        </div>
+        <div class="card card-body">
+            <form method="post" class="form-inline">
+                {% csrf_token %}
+                {% comment %}
+                    Add the current query string to the search form so that the
+                    sort order is not reset when searching.
+                {% endcomment %}
+
+                <label for="upc">UPC:</label>
+                <input id="upc" class="form-control mr-2" type="" name="upc" value=""/>
+                <label for="name" style="margin: 1px; padding-left: 2px;"> Product Name: </label>
+                <input id="name" class="form-control" type="" name="name" value=""/>
+                {% include "oscar/dashboard/partials/form_fields_inline.html" with form=form %}
+                <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #ffffff;" data-loading-text="{% trans 'Searching...' %}"><i class="fas fa-search"></i> {% trans "Search" %}</button>
+            </form>
+        </div>
+    {% endblock %}
+    <div class="table-header">
+        <h3><i class="fas fa-user"></i> {% trans "Stock Integrations" %}</h3>
+    </div>
+    <div class="table-responsive">
+
+
+        <table class="table table-striped table-hover table-bordered">
+            <thead style="background-color: #230BB3 !important; color: #fff;">
+            <tr>
+                <th style="font-weight: normal;">S.No</th>
+                <th style="font-weight: normal;">Products</th>
+                <th style="font-weight: normal;">Inventory</th>
+                <th style="font-weight: normal;">Lst Stock</th>
+                <th style="font-weight: normal;">Date Updated</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for stock_inte_data in stock_integrations_data %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ stock_inte_data.product }}</td>
+                    <td>{{ stock_inte_data.inventory }}</td>
+                    <td>{{ stock_inte_data.last_stock }}</td>
+                    <td>{{ stock_inte_data.created_date|date:"d/m/Y H:i" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="12">Stock Integrations not found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}
+
+

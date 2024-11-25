@@ -1,0 +1,698 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+{% load static %}
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Client Request Details" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb" xmlns="http://www.w3.org/1999/html">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'ClientRequestList' %}">{% trans "Client Request List" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Details</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+<div class="page-header" style="display:  flex; flex-direction: row; justify-content: space-between;" >
+    <h1>Client Request Details {% block headertext %}{% endblock %}</h1>
+    <form action="" method="post">
+
+        {% csrf_token %}
+        <button  type="submit" class="btn" style="background-color: #230BB3 !important; color: #ffffff;" name="status" value="Accepted"><i class="fas fa-edit"></i></button>
+
+    </form>
+</div>
+{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data"
+      action="{% url 'ClientRequestDetailsAction' client_request_data.pk %}">
+    {% csrf_token %}
+
+    <table class="table table-striped table-bordered">
+        <caption>
+            <h3>
+                <i class="fas fa-user"></i> {% trans "Client Verification and Register" %}
+            </h3>
+        </caption>
+        <tbody>
+            <tr>
+                <th>{% trans "Primary Contact Person" %}</th>
+                <td>{{ client_request_data.request_user.primary_contact_person }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Designation" %}</th>
+                <td>{{ client_request_data.request_user.designation }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Email" %}</th>
+                <td>{{ client_request_data.request_user.email }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Mobile No." %}</th>
+                <td>{{ client_request_data.request_user.mobile_number }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Bussiness Name" %}</th>
+                <td>{{ client_request_data.request_user.bussiness_name }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "GST No" %}</th>
+                <td>{{ client_request_data.onboarding_gst_verify.gst_number|default:"-" }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Pancard Number" %}</th>
+                <td>{{ client_request_data.onboarding_gst_verify.pancard_no }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Date Of Establishment" %}</th>
+                <td>{{ client_request_data.onboarding_gst_verify.date_of_establishment|date:"d/m/Y" }}</td>
+            </tr>
+            <!-- <tr>
+                <th>{% trans "First Address" %}</th>
+                <td>{{ client_request_data.onboarding_gst_verify.first_address }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Second Address" %}</th>
+                <td>{{ client_request_data.onboarding_gst_verify.second_address }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Pin Code" %}</th>
+                <td>{{ client_request_data.onboarding_gst_verify.postal_code }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "State" %}</th>
+                <td>{{ client_request_data.onboarding_gst_verify.state }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "City" %}</th>
+                <td>{{ client_request_data.onboarding_gst_verify.city }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Country" %}</th>
+                <td>{{ client_request_data.onboarding_gst_verify.country }}</td>
+            </tr> -->
+            <tr>
+                <th>{% trans "First Company Type" %}</th>
+                <td>{{ client_request_data.onboarding_bussiness_details.first_company_type }}</td>
+            </tr>
+            <!-- <tr>
+                <th>{% trans "Second Company Type" %}</th>
+                <td>{{ client_request_data.onboarding_bussiness_details.second_company_type }}</td>
+            </tr> -->
+            <tr>
+                <th>{% trans "Industry Type" %}</th>
+                <td>{{ client_request_data.onboarding_bussiness_details.industry_type }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Website Link" %}</th>
+                <td>{{ client_request_data.onboarding_bussiness_details.website_link }}</td>
+            </tr>
+            <!-- <tr>
+                <th>{% trans "Alternative_mobile" %}</th>
+                <td>{{ client_request_data.onboarding_alternative_perDetails.alternative_mobile |default:"-"}}</td>
+            </tr> -->
+            <!-- <tr>
+                <th>{% trans "Alternative_email" %}</th>
+                <td>{{ client_request_data.onboarding_alternative_perDetails.alternative_email |default:"-"}}</td>
+            </tr> -->
+            <!-- <tr>
+                <th>{% trans "Alternative designation" %}</th>
+                <td>{{ client_request_data.onboarding_alternative_perDetails.alternative_designation |default:"-"}}</td>
+            </tr> -->
+            <!-- <tr>
+                <th>{% trans "Alternative person name" %}</th>
+                <td>{{ client_request_data.onboarding_alternative_perDetails.alternative_person_name |default:"-"}}</td>
+            </tr> -->
+            <!-- test data -->
+            <tr>
+                <th>{% trans "Registration Address " %}</th>
+                <td>{{ client_request_data.onboarding_reg_ad.reg_address |default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Registration City " %}</th>
+                <td>{{ client_request_data.onboarding_reg_ad.reg_city |default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Registration State " %}</th>
+                <td>{{ client_request_data.onboarding_reg_ad.reg_state |default:"-"}}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Registration Country " %}</th>
+                <td>{{ client_request_data.onboarding_reg_ad.reg_country |default:"-"}}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Registration Postal Code " %}</th>
+                <td>{{ client_request_data.onboarding_reg_ad.reg_postal_code |default:"-"}}</td>
+            </tr>
+            <!-- test data -->
+
+            <!-- new data -->
+            <tr>
+                <th>{% trans "Warehouse Address " %}</th>
+                <td>{{ client_request_data.onboarding_Warehouse_ad.warehouse_address |default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Warehouse City " %}</th>
+                <td>{{ client_request_data.onboarding_Warehouse_ad.warehouse_city |default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Warehouse State " %}</th>
+                <td>{{ client_request_data.onboarding_Warehouse_ad.warehouse_state |default:"-"}}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Warehouse Country " %}</th>
+                <td>{{ client_request_data.onboarding_Warehouse_ad.warehouse_country |default:"-"}}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Warehouse Postal Code " %}</th>
+                <td>{{ client_request_data.onboarding_Warehouse_ad.warehouse_postal_code |default:"-"}}</td>
+            </tr>
+
+            <!-- newdata  -->
+
+            <!-- finatal test -->
+               <!-- new data -->
+            <tr>
+                <th>{% trans "Outlet Address " %}</th>
+                <td>{{ client_request_data.onboarding_OutletAddress_ad.outlet_address |default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Outlet City " %}</th>
+                <td>{{ client_request_data.onboarding_OutletAddress_ad.outlet_city |default:"-" }}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Outlet State " %}</th>
+                <td>{{ client_request_data.onboarding_OutletAddress_ad.outlet_state |default:"-"}}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Outlet Country " %}</th>
+                <td>{{ client_request_data.onboarding_OutletAddress_ad.outlet_country |default:"-"}}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Outlet Postal Code " %}</th>
+                <td>{{ client_request_data.onboarding_OutletAddress_ad.outlet_postal_code |default:"-"}}</td>
+            </tr>
+
+            <!-- final end  -->
+
+            <!-- test data two -->
+            <tr>
+                <th>{% trans "Communication Address " %}</th>
+                <td>{{ client_request_data.onboarding_comm_ad.communication_address |default:"-"}}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Communication City " %}</th>
+                <td>{{ client_request_data.onboarding_comm_ad.communication_city |default:"-"}}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Communication State " %}</th>
+                <td>{{ client_request_data.onboarding_comm_ad.communication_state |default:"-"}}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Communication Country " %}</th>
+                <td>{{ client_request_data.onboarding_comm_ad.communication_country |default:"-"}}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans "Communication Postal Code " %}</th>
+                <td>{{ client_request_data.onboarding_comm_ad.communication_postal_code|default:"-" }}</td>
+            </tr>
+            <!-- test data two -->
+            <tr>
+                <th>{% trans "Upload PAN Card" %}</th>
+                <td>
+                    {% if client_request_data.onboarding_bank_details.upload_pan %}
+                    <img id="pan-preview" src="{{ client_request_data.onboarding_bank_details.upload_pan.url }}"
+                         alt="PAN Card Image" class="img-fluid" style="max-width: 100px; max-height: 80px;" data-toggle="modal" data-target="#PANModal">
+                    {% endif %}
+                    <!-- Advanced Search Modal -->
+                    <div class="modal fade" id="PANModal" tabindex="-1" role="dialog" aria-labelledby="PANModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="SearchModalLabel">Upload PAN Card</h5>
+                                    <button type="button" style="height:20px;" class="close tf-button style-1 w100" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                {% if client_request_data.onboarding_bank_details.upload_pan %}
+                                <div class="modal-header">
+                                    <img src="{{ client_request_data.onboarding_bank_details.upload_pan.url }}"
+                                        alt="Upload PAN Card Image" class="img-fluid" style="max-width: auto; max-height: auto;">
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JavaScript for Modal Handling -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const searchButton = document.querySelector('[data-target="#PANModal"]');
+                            const searchModal = document.getElementById('PANModal');
+                            const closeModalButton = searchModal.querySelector('.close');
+                            const cancelButton = searchModal.querySelector('.btn-secondary[data-dismiss="modal"]');
+
+                            // Show the modal when the trigger button is clicked
+                            searchButton.addEventListener('click', function () {
+                                $(PANModal).modal('show');
+                            });
+
+                            // Close modal when close button is clicked
+                            if (closeModalButton) {
+                                closeModalButton.addEventListener('click', function () {
+                                    $(PANModal).modal('hide');
+                                });
+                            }
+
+                            // Close modal when Cancel button is clicked
+                            if (cancelButton) {
+                                cancelButton.addEventListener('click', function () {
+                                    $(PANModal).modal('hide');
+                                });
+                            }
+                        });
+                    </script>
+                    <!-- End Advanced Search Modal -->
+                </td>
+            </tr>
+            <tr>
+                <th>{% trans "Upload GST" %}</th>
+                <td>
+                    {% if client_request_data.onboarding_bank_details.upload_gst %}
+                    <img id="gst-preview" src="{{ client_request_data.onboarding_bank_details.upload_gst.url }}"
+                         alt="GST Image" class="img-fluid" style="max-width: 100px; max-height: 80px;" data-toggle="modal" data-target="#GSTModal">
+                    {% endif %}
+                    <!-- Advanced Search Modal -->
+                    <div class="modal fade" id="GSTModal" tabindex="-1" role="dialog" aria-labelledby="SearchModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="GSTModalLabel">Upload GST</h5>
+                                    <button type="button" style="height:20px;" class="close tf-button style-1 w100" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                {% if client_request_data.onboarding_bank_details.upload_gst %}
+
+                                <div class="modal-header">
+                                    <img src="{{ client_request_data.onboarding_bank_details.upload_gst.url }}"
+                                        alt="Upload GST Image" class="img-fluid" style="max-width: 100%; max-height: 100%;">
+                                </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JavaScript for Modal Handling -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const searchButton = document.querySelector('[data-target="#GSTModal"]');
+                            const GSTModal = document.getElementById('GSTModal');
+                            const closeModalButton = GSTModal.querySelector('.close');
+                            const cancelButton = GSTModal.querySelector('.btn-secondary[data-dismiss="modal"]');
+
+                            // Show the modal when the trigger button is clicked
+                            searchButton.addEventListener('click', function () {
+                                $(GSTModal).modal('show');
+                            });
+
+                            // Close modal when close button is clicked
+                            if (closeModalButton) {
+                                closeModalButton.addEventListener('click', function () {
+                                    $(GSTModal).modal('hide');
+                                });
+                            }
+
+                            // Close modal when Cancel button is clicked
+                            if (cancelButton) {
+                                cancelButton.addEventListener('click', function () {
+                                    $(GSTModal).modal('hide');
+                                });
+                            }
+                        });
+                    </script>
+                    <!-- End Advanced Search Modal -->
+                </td>
+            </tr>
+            <tr>
+                <th>{% trans "Certificate Of Corporation" %}</th>
+                <td>
+                    {% if client_request_data.onboarding_bank_details.certificate_of_corporation %}
+                    <img id="certificate-preview"
+                         src="{{ client_request_data.onboarding_bank_details.certificate_of_corporation.url }}"
+                         alt="certificate Image" class="img-fluid" style="max-width: 100px; max-height: 80px;" data-toggle="modal" data-target="#certificateModal">
+                    {% endif %}
+                    <!-- Advanced Search Modal -->
+                    <div class="modal fade" id="certificateModal" tabindex="-1" role="dialog" aria-labelledby="certificateModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="certificateModalLabel">Certificate of Corporation</h5>
+                                    <button type="button" style="height:20px;" class="close tf-button style-1 w100" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                {% if client_request_data.onboarding_bank_details.certificate_of_corporation %}
+
+                                <div class="modal-header">
+                                    <img src="{{ client_request_data.onboarding_bank_details.certificate_of_corporation.url }}"
+                                        alt="Certificate of Corporation Image" class="img-fluid" style="max-width: 100%; max-height: 100%;">
+                                </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JavaScript for Modal Handling -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const searchButton = document.querySelector('[data-target="#certificateModal"]');
+                            const certificateModal = document.getElementById('certificateModal');
+                            const closeModalButton = certificateModal.querySelector('.close');
+                            const cancelButton = certificateModal.querySelector('.btn-secondary[data-dismiss="modal"]');
+
+                            // Show the modal when the trigger button is clicked
+                            searchButton.addEventListener('click', function () {
+                                $(certificateModal).modal('show');
+                            });
+
+                            // Close modal when close button is clicked
+                            if (closeModalButton) {
+                                closeModalButton.addEventListener('click', function () {
+                                    $(certificateModal).modal('hide');
+                                });
+                            }
+
+                            // Close modal when Cancel button is clicked
+                            if (cancelButton) {
+                                cancelButton.addEventListener('click', function () {
+                                    $(certificateModal).modal('hide');
+                                });
+                            }
+                        });
+                    </script>
+                    <!-- End Advanced Search Modal -->
+                </td>
+            </tr>
+            <tr>
+                <th>{% trans "MSME" %}</th>
+                <td>
+                    {% if client_request_data.onboarding_bank_details.msme %}
+                    <img id="msme-preview" src="{{ client_request_data.onboarding_bank_details.msme.url }}"
+                         alt="MSME Image" class="img-fluid" style="max-width: 100px; max-height: 80px;" data-toggle="modal" data-target="#MSMEModal">
+                    {% endif %}
+                    <!-- Advanced Search Modal -->
+                    <div class="modal fade" id="MSMEModal" tabindex="-1" role="dialog" aria-labelledby="MSMEModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="MSMEModalLabel">MSME</h5>
+                                    <button type="button" style="height:20px;" class="close tf-button style-1 w100" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                {% if client_request_data.onboarding_bank_details.msme %}
+
+                                <div class="modal-header">
+                                    <img src="{{ client_request_data.onboarding_bank_details.msme.url }}"
+                                        alt="MSME Image" class="img-fluid" style="max-width: 100%; max-height: 100%;">
+                                </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JavaScript for Modal Handling -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const searchButton = document.querySelector('[data-target="#MSMEModal"]');
+                            const MSMEModal = document.getElementById('MSMEModal');
+                            const closeModalButton = MSMEModal.querySelector('.close');
+                            const cancelButton = MSMEModal.querySelector('.btn-secondary[data-dismiss="modal"]');
+
+                            // Show the modal when the trigger button is clicked
+                            searchButton.addEventListener('click', function () {
+                                $(MSMEModal).modal('show');
+                            });
+
+                            // Close modal when close button is clicked
+                            if (closeModalButton) {
+                                closeModalButton.addEventListener('click', function () {
+                                    $(MSMEModal).modal('hide');
+                                });
+                            }
+
+                            // Close modal when Cancel button is clicked
+                            if (cancelButton) {
+                                cancelButton.addEventListener('click', function () {
+                                    $(MSMEModal).modal('hide');
+                                });
+                            }
+                        });
+                    </script>
+                    <!-- End Advanced Search Modal -->
+                </td>
+            </tr>
+            <tr>
+                <th>{% trans "Authorization Letter" %}</th>
+                <td>
+                    {% if client_request_data.onboarding_bank_details.authorization_letter %}
+                    <img id="authorization-preview"
+                         src="{{ client_request_data.onboarding_bank_details.authorization_letter.url }}"
+                         alt="Authorization Letter Image" class="img-fluid" style="max-width: 100px; max-height: 80px;" data-toggle="modal" data-target="#AuthorizationModal">
+                    {% endif %}
+                    <!-- Advanced Search Modal -->
+                    <div class="modal fade" id="AuthorizationModal" tabindex="-1" role="dialog" aria-labelledby="AuthorizationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="AuthorizationModalLabel">Authorization Letter</h5>
+                                    <button type="button" style="height:20px;" class="close tf-button style-1 w100" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                {% if client_request_data.onboarding_bank_details.authorization_letter %}
+
+                                <div class="modal-header">
+                                    <img src="{{ client_request_data.onboarding_bank_details.authorization_letter.url }}"
+                                        alt="Authorization Letter Image" class="img-fluid" style="max-width: 100%; max-height: 100%;">
+                                </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JavaScript for Modal Handling -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const searchButton = document.querySelector('[data-target="#AuthorizationModal"]');
+                            const AuthorizationModal = document.getElementById('AuthorizationModal');
+                            const closeModalButton = AuthorizationModal.querySelector('.close');
+                            const cancelButton = AuthorizationModal.querySelector('.btn-secondary[data-dismiss="modal"]');
+
+                            // Show the modal when the trigger button is clicked
+                            searchButton.addEventListener('click', function () {
+                                $(AuthorizationModal).modal('show');
+                            });
+
+                            // Close modal when close button is clicked
+                            if (closeModalButton) {
+                                closeModalButton.addEventListener('click', function () {
+                                    $(AuthorizationModal).modal('hide');
+                                });
+                            }
+
+                            // Close modal when Cancel button is clicked
+                            if (cancelButton) {
+                                cancelButton.addEventListener('click', function () {
+                                    $(AuthorizationModal).modal('hide');
+                                });
+                            }
+                        });
+                    </script>
+                    <!-- End Advanced Search Modal -->
+                </td>
+            </tr>
+            <tr>
+                <th>{% trans "Aadhar Card " %}</th>
+                <td>
+                    {% if client_request_data.onboarding_bank_details.aadhar %}
+                    <img id="aadhar-preview" src="{{ client_request_data.onboarding_bank_details.aadhar.url }}"
+                         alt="Aadhar Card Image" class="img-fluid" style="max-width: 100px; max-height: 80px;" data-toggle="modal" data-target="#AadharModal">
+                    {% endif %}
+                    <!-- Advanced Search Modal -->
+                    <div class="modal fade" id="AadharModal" tabindex="-1" role="dialog" aria-labelledby="AadharModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="AadharModalLabel">Aadhar Card</h5>
+                                    <button type="button" style="height:20px;" class="close tf-button style-1 w100" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                {% if client_request_data.onboarding_bank_details.aadhar %}
+
+                                <div class="modal-header">
+                                    <img src="{{ client_request_data.onboarding_bank_details.aadhar.url }}"
+                                        alt="Aadhar Image" class="img-fluid" style="max-width: 100%; max-height: 100%;">
+                                </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JavaScript for Modal Handling -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const searchButton = document.querySelector('[data-target="#AadharModal"]');
+                            const AadharModal = document.getElementById('AadharModal');
+                            const closeModalButton = AadharModal.querySelector('.close');
+                            const cancelButton = AadharModal.querySelector('.btn-secondary[data-dismiss="modal"]');
+
+                            // Show the modal when the trigger button is clicked
+                            searchButton.addEventListener('click', function () {
+                                $(AadharModal).modal('show');
+                            });
+
+                            // Close modal when close button is clicked
+                            if (closeModalButton) {
+                                closeModalButton.addEventListener('click', function () {
+                                    $(AadharModal).modal('hide');
+                                });
+                            }
+
+                            // Close modal when Cancel button is clicked
+                            if (cancelButton) {
+                                cancelButton.addEventListener('click', function () {
+                                    $(AadharModal).modal('hide');
+                                });
+                            }
+                        });
+                    </script>
+                    <!-- End Advanced Search Modal -->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success" name="status" value="Accepted">{% trans "Accept" %}</button>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#rejectModal">{% trans "Reject" %}</button>
+        <button type="button" class="btn btn-warning" data-toggle="modal" style="text-decoration: solid; color: #ffffff; font-weight: 700;" data-target="#holdtModal">{% trans "Hold" %}</button>
+    </div>
+</form>
+
+<!-- Start Rejection Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="rejectModalLabel">{% trans "Reject Request" %}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="post" action="{% url 'ClientRequestDetailsAction' client_request_data.pk %}">
+                            {% csrf_token %}
+                            <input readonly  type="hidden" name="status" value="Rejected">  
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="rejection_reason">{% trans "Reason for Rejection" %}:</label>
+                                    <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" required></textarea>
+                                </div>
+                                
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger">{% trans "Confirm Rejection" %}</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+<!-- End Rejection Modal -->
+
+<!--Start Hold Modal -->
+<div class="modal fade" id="holdtModal" tabindex="-1" role="dialog" aria-labelledby="HoldModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="HoldModalLabel">{% trans "Hold Request" %}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="post" action="{% url 'ClientRequestDetailsAction' client_request_data.pk %}">
+                            {% csrf_token %}
+                            <input readonly  type="hidden" name="status" value="Hold">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="hold_reason">{% trans "Reason for Hold" %}:</label>
+                                    <textarea class="form-control" id="hold_reason" name="hold_reason" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="check1">Upload Pan Card : </label>
+                                    <input type="checkbox" value="{{ client_request_data.onboarding_bank_details.upload_pan }}" name="upload_pan" id="check1"><br />
+                                    <label for="upload_gst">Upload Gst : </label>
+                                    <input type="checkbox" value="{{ client_request_data.onboarding_bank_details.upload_gst }}" name="upload_gst" id="upload_gst"><br />
+                                    <label for="certificate_of_corporation">Certificate Of Corporation : </label>
+                                    <input type="checkbox" value="{{ client_request_data.onboarding_bank_details.certificate_of_corporation }}" name=certificate_of_corporation" id="certificate_of_corporation"><br />
+                                    <label for="msme">MSME : </label>
+                                    <input type="checkbox" value="{{ client_request_data.onboarding_bank_details.msme }}" name="msme" id="msme"><br />
+                                    <label for="authorization_letter">Authorization Letter : </label>
+                                    <input type="checkbox" value="{{ client_request_data.onboarding_bank_details.authorization_letter }}" name="authorization_letter" id="authorization_letter"><br />
+                                    <label for="aadhar_card">Aadhar Card : </label>
+                                    <input type="checkbox" value="{{ client_request_data.onboarding_bank_details.aadhar }}" name="aadhar_card" id="aadhar_card">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-warning">{% trans "Confirm Hold" %}</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+<!--End Hold Modal -->
+<script>
+    function displayImagePreview(input, previewId) {
+        var file = input.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var preview = document.getElementById(previewId);
+                preview.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+{% endblock %}

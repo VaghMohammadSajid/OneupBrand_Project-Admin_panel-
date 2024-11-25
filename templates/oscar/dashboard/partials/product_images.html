@@ -1,0 +1,25 @@
+{% load i18n %}
+<li class='sortable-handle'>
+    {% for field in form %}
+        {% if field.is_hidden %}
+            {{ field }}
+        {% elif "original" in field.id_for_label %}
+            <div>{{ field }}</div>
+            {% for error in field.errors %}
+                <ul class="error-block">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endfor %}
+            <a href="#" class="btn {% if not form.instance.id %}{% endif %}" {% if not form.instance.id %}disabled{% endif %} style="background-color: #230BB3 !important; color: #fff;"><i class="fas fa-arrows-alt"></i> {% trans "Re-order" context "Change the sequence order" %}</a><br>
+        {% else %}
+            {{ field.label_tag }}
+            {{ field }}
+            {% for error in field.errors %}
+                <ul class="error-block">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+    {{ form.non_field_errors }}
+</li>

@@ -1,0 +1,429 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+{% load static %}
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Edit" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'client-list' %}">{% trans "Client List" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Edit" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+<div class="page-header">
+    <h1>Update client Info {% block headertext %}{% endblock %}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+             <!-- Sign Up Data -->
+            <div class="table-header mr-3 ml-3">
+                <h3><i><img src="{% static 'oscar/img/ui/businessman.png' %}" style="solid-black max-width: 18px; max-height: 18px;"></i> {% trans "Client Verification and Register" %}</h3>
+            </div>
+            <div class="card card-body mr-3 ml-3 mb-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email">Email:<span style="color: red; font-size: small;">*</span></label>
+                            <input type="hidden" name="email_hidden" id="email_hidden" value="{% if client_user_edit.email_hidden %}{{ client_user_edit.email_hidden}}{% else %}{{ client_user.user.email }}{% endif %}">
+
+                            <input class="form-control" type="email" placeholder="Email" name="email" id="email"  value="{% if client_user_edit.email %}{{ client_user_edit.email }}{% else %}{{ client_user.user.email }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label for="first_name">First Name:<span style="color: red; font-size: small;">*</span></label>
+
+                            <input class="form-control" type="text" placeholder="First Name" name="first_name"
+                                   id="first_name"  value="{% if client_user_edit.first_name %}{{ client_user_edit.first_name }}{% else %}{{ client_user.user.first_name }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label for="primary_contact_person">Primary Contact Person:<span
+                                    style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Primary Contact Person"
+                                   name="primary_contact_person" id="primary_contact_person"
+                                   value="{% if client_user_edit.primary_contact_person %}{{ client_user_edit.primary_contact_person }}{% else %}{{ client_user.primary_contact_person }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ primary_contact_person_error }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="company_name">Bussiness Name:<span
+                                    style="color: red; font-size: small;">*</span></label>
+                            <input required type="text" class="form-control" id="company_name" name="company_name"
+                            value="{% if client_user_edit.company_name %}{{ client_user_edit.company_name }}{% else %}{{ client_user.company_name }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ company_name_error }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_of_birth">Date Of Birth:</label>
+                            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
+                                   value="{{ client_user.date_of_birth|date:'Y-m-d' }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="mobile_no">Mobile Number:<span
+                                    style="color: red; font-size: small;">*</span></label>
+                                    <input type="hidden" id="mobile_no_hidden" name="mobile_no_hidden" value="{% if client_user_edit.mobile_no_hidden %}{{ client_user_edit.mobile_no_hidden }}{% else %}{{ client_user.mobile_no }}{% endif %}">
+
+                            <input type="text" class="form-control" id="mobile_no" name="mobile_no"     value="{% if client_user_edit.mobile_no %}{{ client_user_edit.mobile_no }}{% else %}{{ client_user.mobile_no }}{% endif %}"
+                            >
+                            <span class="error-message" style="color: red;">{{ mobile_error }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="last_name">Last Name</label>
+
+                            <input class="form-control" type="text" placeholder="Last Name" name="last_name"
+                                   id="last_name"  value="{% if client_user_edit.last_name %}{{ client_user_edit.last_name }}{% else %}{{ client_user.user.last_name }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label for="designation">Designation:<span
+                                    style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Designation" name="designation"
+                                   id="designation" value="{% if client_user_edit.designation %}{{ client_user_edit.designation }}{% else %}{{ client_user.designation }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ designation_error }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender:<span style="color: red; font-size: small;">*</span></label>
+                            <select class="form-control" id="gender" name="gender">
+                                <option value="MALE" {% if client_user.gender == 'MALE' %}selected{% endif %}>Male</option>
+                                <option value="FEMALE" {% if client_user.gender == 'FEMALE' %}selected{% endif %}>Female</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onboarding Gst Verify Data -->
+            <div class="table-header mr-3 ml-3">
+                <h3><i><img src="{% static 'oscar/img/ui/gst.png' %}" style="solid-black max-width: 18px; max-height: 18px;"></i> {% trans "GST Verification" %}</h3>
+            </div>
+            <div class="card card-body mr-3 ml-3 mb-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="gst_no">GST Number:</label>
+                            <input required type="text" class="form-control" id="gst_no" name="gst_no"
+                            value="{% if client_user_edit.gst_no %}{{ client_user_edit.gst_no }}{% else %}{{ client_user.gst_no }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label for="date_of_establishment">Date Of Establishment:<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="date" name="date_of_establishment"
+                                   id="date_of_establishment"
+                                   value="{% if client_user_edit.date_of_establishment %}{{ client_user_edit.date_of_establishment|date:'Y-m-d' }}{% else %}{{ client_user.date_of_establishment|date:'Y-m-d' }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ date_of_establishment_error }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="pancard_no">Pancard Number:<span
+                                    style="color: red; font-size: small;">*</span></label>
+                            <input type="text" class="form-control" id="pancard_no" name="pancard_no"
+                            value="{% if client_user_edit.pancard_no %}{{ client_user_edit.pancard_no }}{% else %}{{ client_user.pancard_no }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ pancard_number_error }}</span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onboarding Bussiness Data -->
+             <div class="table-header mr-3 ml-3">
+                 <h3><i><img src="{% static 'oscar/img/ui/bussiness.png' %}" style="solid-black max-width: 18px; max-height: 18px;"></i> {% trans "Bussiness Verification" %}</h3>
+            </div>
+             <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="first_company_type">First Company Type:<span
+                                    style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="First Company Type"
+                                   name="first_company_type"
+                                   id="first_company_type" value="{% if client_user_edit.first_company_type %}{{ client_user_edit.first_company_type }}{% else %}{{ client_user.first_company_type }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ company_type_error }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="industry_type">Industry Type:<span
+                                    style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Industry Type" name="industry_type"
+                                   id="industry_type" value="{% if client_user_edit.industry_type %}{{ client_user_edit.industry_type }}{% else %}{{ client_user.industry_type }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ industry_type_error }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="website_link">Website Link</label>
+                            <input class="form-control" type="text" placeholder="Website Link" name="website_link"
+                                   id="website_link" value="{% if client_user_edit.website_link %}{{ client_user_edit.website_link }}{% else %}{{ client_user.website_link }}{% endif %}">
+<!--                            <span class="error-message" style="color: red;">{{ website_link_error }}</span>-->
+                        </div>
+                    </div>
+                </div>
+             </div>
+            <!-- Onboarding Bank Data -->
+            <div class="table-header mr-3 ml-3">
+                <h3><i><img src="{% static 'oscar/img/ui/bank.png' %}" style="solid-black max-width: 18px; max-height: 18px;"></i> {% trans "Bank Verification" %}</h3>
+            </div>
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                       <div class="form-group">
+                            <label for="upload_pan">Upload PAN Card:</label>
+                            <input class="form-control" type="file" id="upload_pan" name="upload_pan" onchange="displayImagePreview(this, 'pan-preview')">
+                            {% if client_user_edit.upload_pan %}
+                                <img id="pan-preview" src="{{ client_user_edit.upload_pan.url }}" alt="PAN Card Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% elif client_user.upload_pan %}
+                                <img id="pan-preview" src="{{ client_user.upload_pan.url }}" alt="PAN Card Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% endif %}
+                        
+                       </div>
+
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="upload_gst">Upload GST:</label>
+                            <input class="form-control" type="file" id="upload_gst" name="upload_gst" onchange="displayImagePreview(this, 'gst-preview')">
+                            {% if client_user_edit.upload_gst %}
+                                <img id="gst-preview" src="{{ client_user_edit.upload_gst.url }}" alt="GST Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% elif client_user.upload_gst %}
+                                <img id="gst-preview" src="{{ client_user.upload_gst.url }}" alt="GST Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% endif %}
+                        
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="upload_gst">Certificate Of Corporation :</label>
+                            <input class="form-control" type="file" id="certificate_of_corporation" name="certificate_of_corporation" onchange="displayImagePreview(this, 'Certificate-Of-Corporation-preview')">
+                            {% if client_user_edit.certificate_of_corporation %}
+                                <img id="Certificate-Of-Corporation-preview" src="{{ client_user_edit.certificate_of_corporation.url }}" alt="Certificate Of Corporation Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% elif client_user.certificate_of_corporation %}
+                                <img id="Certificate-Of-Corporation-preview" src="{{ client_user.certificate_of_corporation.url }}" alt="Certificate Of Corporation Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% endif %}
+
+                        </div>
+                    </div>
+                     <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="upload_gst">Msme :</label>
+                            <input class="form-control" type="file" id="msme" name="msme" onchange="displayImagePreview(this, 'Msme-preview')">
+                            {% if client_user_edit.msme %}
+                                <img id="Msme-preview" src="{{ client_user_edit.msme.url }}" alt="Msme Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% elif client_user.msme %}
+                                <img id="Msme-preview" src="{{ client_user.msme.url }}" alt="Msme Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% endif %}
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="upload_gst">Authorization Letter :</label>
+                            <input class="form-control" type="file" id="authorization_letter" name="authorization_letter" onchange="displayImagePreview(this, 'Authorization-preview')">
+                            {% if client_user_edit.authorization_letter %}
+                                <img id="Authorization-preview" src="{{ client_user_edit.authorization_letter.url }}" alt="Authorization Letter Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% elif client_user.authorization_letter %}
+                                <img id="Authorization-preview" src="{{ client_user.authorization_letter.url }}" alt="Authorization Letter Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% endif %}
+                        
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="adhaar">Aadhar Card :</label>
+                            <input class="form-control" type="file" id="adhaar" name="adhaar" onchange="displayImagePreview(this, 'adhaar-preview')">
+                            {% if client_user_edit.adhaar %}
+                                <img id="adhaar-preview" src="{{ client_user_edit.adhaar.url }}" alt="Aadhar Card Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% elif client_user.adhaar %}
+                                <img id="adhaar-preview" src="{{ client_user.adhaar.url }}" alt="Aadhar Card Image" class="img-fluid" style="margin-top:2px; max-width: 100px; max-height: 80px;">
+                            {% endif %}
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- testdata last -->
+            <div class="table-header mr-3 ml-3">
+                <h3><i><img src="{% static 'oscar/img/ui/alter.jpg' %}" style=" max-width: 20px; max-height: 20px;"></i> {% trans "Onboarding Communication" %}</h3>
+            </div>
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="communication_address">Communication Address:<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Communication Address" name="communication_address" id="communication_address" value="{% if client_user_edit.communication_address %}{{ client_user_edit.communication_address }}{% else %}{{ client_user.communication_address }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ communication_address_error }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="communication_city">Communication City :<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Communication City" name="communication_city" id="communication_city" value="{% if client_user_edit.communication_city %}{{ client_user_edit.communication_city }}{% else %}{{ client_user.communication_city }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ city_error }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="communication_state">Communication State :<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Communication State" name="communication_state" id="communication_state" value="{% if client_user_edit.communication_state %}{{ client_user_edit.communication_state }}{% else %}{{ client_user.communication_state }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ state_error }}</span>
+                        </div>
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="communication_country">Communication Country:<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Communication Country" name="communication_country" id="communication_country" value="{% if client_user_edit.communication_country %}{{ client_user_edit.communication_country }}{% else %}{{ client_user.communication_country }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ country_error }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="communication_postal_code">Communication Postal Code :<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Communication Postal Code" name="communication_postal_code" id="communication_postal_code" value="{% if client_user_edit.communication_postal_code %}{{ client_user_edit.communication_postal_code }}{% else %}{{ client_user.communication_postal_code }}{% endif %}">
+                            <span class="error-message" style="color: red;">{{ pin_code_error }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- test last end -->
+
+            <!-- test data -->
+            <div class="table-header mr-3 ml-3">
+                <h3><i><img src="{% static 'oscar/img/ui/register.png' %}" style=" max-width: 20px; max-height: 20px;"></i> {% trans "Onboarding Registered Address" %}</h3>
+
+            </div>
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="alternative_mobile">Registration Address:<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Registration Address" name="reg_address" id="reg_address" value="{% if client_user_edit.reg_address %}{{ client_user_edit.reg_address }}{% else %}{{ client_user.reg_address }}{% endif %}">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="reg_city">Registration City :<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Registration City" name="reg_city" id="reg_city" value="{% if client_user_edit.reg_city %}{{ client_user_edit.reg_city }}{% else %}{{ client_user.reg_city }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg_postal_code">Registration Postal Code :<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Registration Postal Code" name="reg_postal_code" id="reg_postal_code" value="{% if client_user_edit.reg_postal_code %}{{ client_user_edit.reg_postal_code }}{% else %}{{ client_user.reg_postal_code }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="reg_state">Registration State:<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Registration State" name="reg_state" id="reg_state" value="{% if client_user_edit.reg_state %}{{ client_user_edit.reg_state }}{% else %}{{ client_user.reg_state }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg_country">Registration Country:<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Registration Country" name="reg_country" id="reg_country" value="{% if client_user_edit.reg_country %}{{ client_user_edit.reg_country }}{% else %}{{ client_user.reg_country }}{% endif %}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- test end -->
+
+            <!--Start Onboarding Warehouse Data -->
+             <div class="table-header mr-3 ml-3">
+                 <h3><i><img src="{% static 'oscar/img/ui/warehouse.png' %}" style="solid-black max-width: 18px; max-height: 18px;"></i> {% trans "Onboarding Warehouse" %}</h3>
+            </div>
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="warehouse_address">Warehouse Address:</label>
+                            <input class="form-control" type="text" placeholder="Warehouse Address" name="warehouse_address" id="warehouse_address" value="{% if client_user_edit.warehouse_address %}{{ client_user_edit.warehouse_address }}{% else %}{{ client_user.warehouse_address }}{% endif %}">
+<!--                            <span class="error-message" style="color: red;">{{ warehouse_address_error }}</span>-->
+                        </div>
+                        <div class="form-group">
+                            <label for="warehouse_state">Warehouse State:</label>
+                            <input class="form-control" type="text" placeholder="Warehouse State" name="warehouse_state" id="warehouse_state" value="{% if client_user_edit.warehouse_state %}{{ client_user_edit.warehouse_state }}{% else %}{{ client_user.warehouse_state }}{% endif %}">
+<!--                            <span class="error-message" style="color: red;">{{ state_error }}</span>-->
+                        </div>
+                        <div class="form-group">
+                            <label for="warehouse_postal_code">Warehouse Postal Code:</label>
+                            <input class="form-control" type="text" placeholder="Warehouse Postal Code" name="warehouse_postal_code" id="warehouse_postal_code" value="{% if client_user_edit.warehouse_postal_code %}{{ client_user_edit.warehouse_postal_code }}{% else %}{{ client_user.warehouse_postal_code }}{% endif %}">
+<!--                            <span class="error-message" style="color: red;">{{ pin_code_error }}</span>-->
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="warehouse_city">Warehouse City:</label>
+                            <input class="form-control" type="text" placeholder="Warehouse City" name="warehouse_city" id="warehouse_city" value="{% if client_user_edit.warehouse_city %}{{ client_user_edit.warehouse_city }}{% else %}{{ client_user.warehouse_city }}{% endif %}">
+<!--                            <span class="error-message" style="color: red;">{{ city_error }}</span>-->
+                        </div>
+                        <div class="form-group">
+                            <label for="warehouse_country">Warehouse Country:</label>
+                            <input class="form-control" type="text" placeholder="Warehouse Country" name="warehouse_country" id="warehouse_country" value="{% if client_user_edit.warehouse_country %}{{ client_user_edit.warehouse_country }}{% else %}{{ client_user.warehouse_country }}{% endif %}">
+<!--                            <span class="error-message" style="color: red;">{{ state_error }}</span>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End Onboarding Warehouse Data -->
+
+            <!--Start Onboarding Outlet Data -->
+             <div class="table-header mr-3 ml-3">
+                 <h3><i><img src="{% static 'oscar/img/ui/outlet.png' %}" style="solid-black max-width: 18px; max-height: 18px;"></i> {% trans "Onboarding Outlet" %}</h3>
+            </div>
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="outlet_address">Outlet Address:</label>
+                            <input class="form-control" type="text" placeholder="Outlet Address" name="outlet_address" id="outlet_address" value="{% if client_user_edit.outlet_address %}{{ client_user_edit.outlet_address }}{% else %}{{ client_user.outlet_address }}{% endif %}">
+<!--                            <span class="error-message" style="color: red;">{{ outlet_address_error }}</span>-->
+                        </div>
+                        <div class="form-group">
+                            <label for="outlet_state">Outlet State:</label>
+                            <input class="form-control" type="text" placeholder="Outlet state" name="outlet_state" id="outlet_state" value="{% if client_user_edit.outlet_state %}{{ client_user_edit.outlet_state }}{% else %}{{ client_user.outlet_state }}{% endif %}">
+<!--                            <span class="error-message" style="color: red;">{{ state_error }}</span>-->
+                        </div>
+                        <div class="form-group">
+                            <label for="outlet_postal_code">Outlet Postal Code:</label>
+                            <input class="form-control" type="text" placeholder="Outlet Postal Code" name="outlet_postal_code" id="outlet_postal_code" value="{% if client_user_edit.outlet_postal_code %}{{ client_user_edit.outlet_postal_code }}{% else %}{{ client_user.outlet_postal_code }}{% endif %}">
+<!--                            <span class="error-message" style="color: red;">{{ pin_code_error }}</span>-->
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="outlet_city">Outlet City:</label>
+                            <input class="form-control" type="text" placeholder="Outlet City" name="outlet_city" id="outlet_city" value="{% if client_user_edit.outlet_city %}{{ client_user_edit.outlet_city }}{% else %}{{ client_user.outlet_city }}{% endif %}">
+<!--                            <span class="error-message" style="color: red;">{{ city_error }}</span>-->
+                        </div>
+                        <div class="form-group">
+                            <label for="outlet_country">Outlet Country:</label>
+                            <input class="form-control" type="text" placeholder="Outlet Country" name="outlet_country" id="outlet_country" value="{% if client_user_edit.outlet_country %}{{ client_user_edit.outlet_country }}{% else %}{{ client_user.outlet_country }}{% endif %}">
+<!--                            <span class="error-message" style="color: red;">{{ state_error }}</span>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End Onboarding Warehouse Data -->
+
+            <div class="row">
+                <div class="col-md-12 text-left mb-2">
+                    <input type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;" value="Edit">
+                </div>
+            </div>
+
+
+        </form>
+    <script>
+        function displayImagePreview(input, previewId) {
+            var file = input.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var preview = document.getElementById(previewId);
+                    preview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+{% endblock %}

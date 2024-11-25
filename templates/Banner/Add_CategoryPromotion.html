@@ -1,0 +1,536 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Add New Category Promotion Banner" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'CategoryPromotionList-list' %}">{% trans "All Category Banner Sets" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Add New Category Promotion Banner" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+<div class="page-header">
+    <h1>Add New Category Promotion Banner {% block headertext %}{% endblock %}</h1>
+    <p class="text-gray">In the Promotion category area, you should set at least three promotions</p>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="table-header mr-3 ml-3">
+    <h3><i class="fas fa-folder"></i> {% trans "Add New Category Promotion Banner" %}</h3>
+</div>
+<div class="card card-body mr-3 ml-3 mb-3">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="row pr-3 pl-3">
+             <div class="col-md-6">
+                <div class="form-group">
+                    <label for="setName">Set Name:<span style="color: red; font-size: large;">*</span></label>
+                    <input type="text" name="setName" class="form-control" required>
+                </div>
+             </div>
+             <div class="col-md-6">
+                <div class="form-group">
+                    <label class="mt-2" for="setIsActive">Is Active:</label>
+                    <input type="checkbox" name="setIsActive" class="form-control ml-2 mt-2 w-auto h-auto" checked>
+                </div>
+             </div>
+        </div>
+        <table class="table table-striped table-hover table-bordered">
+            <thead style="background-color: #230BB3 !important;color: #fff;">
+                <tr>
+                    <th style="font-weight:normal;">Image:<span style="color: red; font-size: large;">*</span></th>
+                    <th style="font-weight:normal;">Category:<span style="color: red; font-size: large;">*</span></th>
+                    <th style="font-weight:normal;">Sub Category</th>
+                    <th style="font-weight:normal;">Link</th>
+                    <th style="font-weight:normal;">Title:<span style="color: red; font-size: large;">*</span></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <!-- First row -->
+                <tr>
+                    <td style="width: 500px;">
+                        <div class="form-row align-items-center">
+                            <div class="col-auto">
+                                <input type="file" name="image1" class="form-control image-input" style="width: 200px;"
+                                    required>
+                            </div>
+                            <div class="col-auto">
+                                <img class="preview-image1" style="max-width: 100px; max-height: 100px; display: none;">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <select name="category1" class="form-control category-select" style="width: 150px;"
+                            oninput="logBannercategory(this.value)" required>
+                            <option value="" selected>Select a category</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+
+                    <td>
+                        <!-- Add a similar dropdown for subcategories -->
+                        <select name="sub_category1" class="form-control sub-category-select" style="width: 150px;">
+                            <option value="">Select a subcategory</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" name="Link1" id="Link1" oninput="logBannerLink(this.value)"
+                            class="form-control">
+
+                        <!-- <input type="text" name="Link1" id="Link1" class="form-control link-input" required > -->
+                    </td>
+
+
+                    <td><input type="text" name="title1" class="form-control" required></td>
+                </tr>
+
+
+                <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                <script>
+                    $(document).ready(function () {
+                        // JavaScript code for category dropdown change event for the first row
+                        $('.category-select[name="category1"]').on('change', function () {
+                            var parentCategoryId = $(this).val();
+                            var subCategorySelect = $('.sub-category-select');
+
+                            if (parentCategoryId) {
+                                $.ajax({
+                                    url: '{% url "get_child_categories" %}',
+                                    method: 'GET',
+                                    data: { 'parent_category_id': parentCategoryId },
+                                    success: function (data) {
+                                        subCategorySelect.empty();
+
+                                        if (data.length === 0) {
+                                            subCategorySelect.append('<option value="">No subcategory available</option>');
+                                        } else {
+                                            subCategorySelect.append('<option value="">Select a subcategory</option>');
+                                            for (var i = 0; i < data.length; i++) {
+                                                subCategorySelect.append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                                            }
+                                        }
+                                    },
+                                    error: function (error) {
+                                        console.log('Error fetching child categories:', error);
+                                    }
+                                });
+                            } else {
+                                subCategorySelect.empty();
+                                subCategorySelect.append('<option value="">Select a subcategory</option>');
+                            }
+                        });
+                    });
+                </script>
+
+             
+
+
+                <script>
+                    // Initial log
+                    console.log("Script is running!");
+                    console.log("Initial Banner Link:", "{{ banner.Link }}");
+
+                    // Function to log changes and set the values for condition
+                    function logBannerLink(value) {
+                        console.log("Updated Banner Link:", value);
+                        var categorySelect = document.querySelector('.category-select');
+                        var linkInput = document.getElementById('Link1');
+                        var subcategoryselect = document.querySelector('.sub-category-select');
+
+
+                        // Set the condition values based on whether there's a value
+                        categoryValue = categorySelect.value !== '';
+                        logBannerLinkValue = value !== '';
+
+                        // Disable/enable the category select based on the condition
+                        categorySelect.disabled = logBannerLinkValue;
+                        subcategoryselect.disabled = logBannerLinkValue;
+
+                        // Disable/enable the link input based on the condition
+                        linkInput.disabled = categoryValue;
+                    }
+
+                    // Call the function initially with the current value
+                    // logBannerLink("{{ banner.Link }}");
+                </script>
+
+
+                <script>
+
+
+                    // Function to log changes and set the values for condition
+                    function logBannercategory(value) {
+                        console.log("Updated category value:", value);
+
+                        var linkInput = document.getElementById('Link1');
+
+                        // Disable/enable the link input based on the condition
+                        linkInput.disabled = value !== '';
+                    }
+                </script>
+
+<script>
+    $(document).ready(function () {
+        // JavaScript code for image input change event for the first row
+        $('.image-input[name="image1"]').on('change', function () {
+            var input = this;
+            var preview = $(this).closest('.form-row').find('.preview-image1');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.attr('src', e.target.result);
+                    preview.show();
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.hide();
+            }
+        });
+    });
+</script>
+
+                <!-- Second row -->
+                <tr>
+                    <td style="width: 500px;">
+                        <div class="form-row align-items-center">
+                            <div class="col-auto">
+                                <input type="file" name="image2" class="form-control image-input" style="width: 200px;"
+                                    required>
+                            </div>
+                            <div class="col-auto">
+                                <img class="preview-image-2"
+                                    style="max-width: 100px; max-height: 100px; display: none;">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        
+
+                        <select name="category2" class="form-control category-select2" style="width: 150px;" onchange="logBannercategory2(this.value)" required>
+                            <option value="" selected>Select a category</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+
+                    <td>
+                       
+
+                        <select name="sub_category2" class="form-control sub-category-select2" style="width: 150px;">
+                            <option value="">Select a subcategory</option>
+                        </select>
+                        <!-- <span class="selected-subcategory"></span>  -->
+                    </td>
+                    <td>
+                        <input type="text" name="Link2" id="Link2" oninput="logBannerLink2(this.value)"class="form-control">
+                        <!-- <input type="text" name="Link2" id="Link2" class="form-control link-input-two" required> -->
+                    </td>
+
+                    <td><input type="text" name="title2" class="form-control" required></td>
+                </tr>
+
+
+
+                <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                <script>
+                    $(document).ready(function () {
+                        // JavaScript code for category dropdown change event for the first row
+                        $('.category-select2[name="category2"]').on('change', function () {
+                            var parentCategoryId = $(this).val();
+                            var subCategorySelect = $('.sub-category-select2');
+
+                            if (parentCategoryId) {
+                                $.ajax({
+                                    url: '{% url "get_child_categories" %}',
+                                    method: 'GET',
+                                    data: { 'parent_category_id': parentCategoryId },
+                                    success: function (data) {
+                                        subCategorySelect.empty();
+
+                                        if (data.length === 0) {
+                                            subCategorySelect.append('<option value="">No subcategory available</option>');
+                                        } else {
+                                            subCategorySelect.append('<option value="">Select a subcategory</option>');
+                                            for (var i = 0; i < data.length; i++) {
+                                                subCategorySelect.append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                                            }
+                                        }
+                                    },
+                                    error: function (error) {
+                                        console.log('Error fetching child categories:', error);
+                                    }
+                                });
+                            } else {
+                                subCategorySelect.empty();
+                                subCategorySelect.append('<option value="">Select a subcategory</option>');
+                            }
+                        });
+                    });
+                </script>
+
+         
+
+
+
+                <script>
+                    // Initial log
+                    console.log("Script is running!");
+                    console.log("Initial Banner Link:", "{{ banner.Link }}");
+
+                    // Function to log changes and set the values for condition
+                    function logBannerLink2(value) {
+                        console.log("Updated Banner Link:", value);
+                        var categorySelect = document.querySelector('.category-select2');
+                        var linkInput = document.getElementById('Link2');
+                        var subcategoryselect = document.querySelector('.sub-category-select2');
+
+
+                        // Set the condition values based on whether there's a value
+                        categoryValue = categorySelect.value !== '';
+                        logBannerLinkValue = value !== '';
+
+                        // Disable/enable the category select based on the condition
+                        categorySelect.disabled = logBannerLinkValue;
+                        subcategoryselect.disabled = logBannerLinkValue;
+
+                        // Disable/enable the link input based on the condition
+                        linkInput.disabled = categoryValue;
+                    }
+
+                    // Call the function initially with the current value
+                    // logBannerLink("{{ banner.Link }}");
+                </script>
+
+
+                <script>
+
+
+                    // Function to log changes and set the values for condition
+                    function logBannercategory2(value) {
+                        console.log("Updated category value value 222:", value);
+
+                        var linkInput = document.getElementById('Link2');
+
+                        // Disable/enable the link input based on the condition
+                        linkInput.disabled = value !== '';
+                    }
+                </script>
+
+<script>
+    $(document).ready(function () {
+        // JavaScript code for image input change event for the first row
+        $('.image-input[name="image2"]').on('change', function () {
+            var input = this;
+            var preview = $(this).closest('.form-row').find('.preview-image-2');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.attr('src', e.target.result);
+                    preview.show();
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.hide();
+            }
+        });
+    });
+</script>
+
+              
+                <!-- Third row -->
+                <!-- Third row -->
+                <!-- Third row -->
+                <tr>
+                    <td style="width: 500px;"> <!-- Set the desired width here -->
+                        <div class="form-row align-items-center">
+                            <div class="col-auto">
+                                <input type="file" name="image3" class="form-control image-input" style="width: 200px;"
+                                    required>
+                            </div>
+                            <div class="col-auto">
+                                <img class="preview-image-3"
+                                    style="max-width: 100px; max-height: 100px; display: none;">
+                            </div>
+                        </div>
+                    </td>
+
+                    <td>
+                      
+
+                        <select name="category3" class="form-control category-select3" style="width: 150px;" onchange="logBannercategory3(this.value)" required>
+                            <option value="" selected>Select a category</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+
+                    <td>
+                      
+                        
+                        <select name="sub_category3" class="form-control sub-category-select3" style="width: 150px;">
+                            <option value="">Select a subcategory</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" name="Link3" id="Link3" oninput="logBannerLink3(this.value)"class="form-control">
+
+                    </td>
+
+
+                    <td><input type="text" name="title3" class="form-control" required></td>
+                </tr>
+
+                
+                <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                <script>
+                    $(document).ready(function () {
+                        // JavaScript code for category dropdown change event for the first row
+                        $('.category-select3[name="category3"]').on('change', function () {
+                            var parentCategoryId = $(this).val();
+                            var subCategorySelect = $('.sub-category-select3');
+
+                            if (parentCategoryId) {
+                                $.ajax({
+                                    url: '{% url "get_child_categories" %}',
+                                    method: 'GET',
+                                    data: { 'parent_category_id': parentCategoryId },
+                                    success: function (data) {
+                                        subCategorySelect.empty();
+
+                                        if (data.length === 0) {
+                                            subCategorySelect.append('<option value="">No subcategory available</option>');
+                                        } else {
+                                            subCategorySelect.append('<option value="">Select a subcategory</option>');
+                                            for (var i = 0; i < data.length; i++) {
+                                                subCategorySelect.append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                                            }
+                                        }
+                                    },
+                                    error: function (error) {
+                                        console.log('Error fetching child categories:', error);
+                                    }
+                                });
+                            } else {
+                                subCategorySelect.empty();
+                                subCategorySelect.append('<option value="">Select a subcategory</option>');
+                            }
+                        });
+                    });
+                </script>
+
+      
+
+
+
+                <script>
+                    // Initial log
+                    console.log("Script is running!");
+                    console.log("Initial Banner Link:", "{{ banner.Link }}");
+
+                    // Function to log changes and set the values for condition
+                    function logBannerLink3(value) {
+                        console.log("Updated Banner Link:", value);
+                        var categorySelect = document.querySelector('.category-select3');
+                        var linkInput = document.getElementById('Link3');
+                        var subcategoryselect = document.querySelector('.sub-category-select3');
+
+
+                        // Set the condition values based on whether there's a value
+                        categoryValue = categorySelect.value !== '';
+                        logBannerLinkValue = value !== '';
+
+                        // Disable/enable the category select based on the condition
+                        categorySelect.disabled = logBannerLinkValue;
+                        subcategoryselect.disabled = logBannerLinkValue;
+
+                        // Disable/enable the link input based on the condition
+                        linkInput.disabled = categoryValue;
+                    }
+
+                    // Call the function initially with the current value
+                    // logBannerLink("{{ banner.Link }}");
+                </script>
+
+
+                <script>
+
+
+                    // Function to log changes and set the values for condition
+                    function logBannercategory3(value) {
+                        console.log("Updated category value value 222:", value);
+
+                        var linkInput = document.getElementById('Link3');
+
+                        // Disable/enable the link input based on the condition
+                        linkInput.disabled = value !== '';
+                    }
+                </script>
+
+
+<!-- test -->
+
+
+<script>
+    $(document).ready(function () {
+        // JavaScript code for image input change event for the first row
+        $('.image-input[name="image3"]').on('change', function () {
+            var input = this;
+            var preview = $(this).closest('.form-row').find('.preview-image-3');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.attr('src', e.target.result);
+                    preview.show();
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.hide();
+            }
+        });
+    });
+</script>
+
+<!-- test -->
+
+             
+
+
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-start">
+            <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Save</button>
+        </div>
+    </form>
+</div>
+
+
+
+
+{% endblock %}

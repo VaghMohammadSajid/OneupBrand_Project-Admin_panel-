@@ -1,0 +1,240 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Add-Role" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'Manage-NewsLetter-Template' %}">{% trans "Add-Role " %}</a>
+            </li>
+            <li class="breadcrumb-item">{% trans "Roles" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>Create A Role</h1>
+    </div>
+{% endblock %}
+{% block content %}
+
+<body>
+    <form method="POST">
+        {%  csrf_token %}
+        <label for="role_name">ROLE NAME</label>
+       
+        <input id="role_name" name="role_name" type="text">
+
+    <table id="myTable">
+        <thead>
+          <tr>
+            <th><input type="checkbox" /></th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for i in data %}
+          <tr>
+            <td class="che"><input name="{{i}}" type="checkbox" /></td>
+           
+            <td>{{i}}</td>
+            <td>Completed</td>
+            <td>2024-09-01</td>
+          </tr>
+          
+         
+          <tr>
+            <!-- <td><input type="checkbox" /></td>
+            <td>Task 2</td>
+            <td>In Progress</td>
+            <td>2024-09-02</td> -->
+          </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit">Save</button>
+</form>
+    <script type="application/javascript" >
+        // Function to create child rows (permissions)
+       
+        function createChildRows(row) {
+           
+            let firstTdValue = row.querySelectorAll('td')[1].textContent.trim();
+            var urlWithSub = JSON.parse(document.getElementById('data').textContent);
+            
+            per = urlWithSub[firstTdValue]
+            var urlNames = Object.keys(per);
+
+            const permissions =  urlNames 
+
+            // Check if child rows already exist to prevent duplicates
+            if (row.nextElementSibling && row.nextElementSibling.classList.contains('child-row')) {
+                return; // Child rows already exist, do nothing
+            }
+
+            permissions.forEach(permission => {
+                const childRow = document.createElement('tr');
+                childRow.className = 'child-row show'; // Initially hidden
+                childRow.innerHTML = `
+                    <td><input name="${permission}" type="checkbox" /></td>
+                    <td colspan="3" style="cursor: pointer;">${permission}</td>
+                `;
+                row.insertAdjacentElement('afterend', childRow);
+
+                // Add click event to the permission row to create options
+                childRow.addEventListener('click', function(event) {
+                    event.stopPropagation(); // Prevent triggering parent row click
+                  
+                    if (event.target.type == "checkbox")
+                    {
+                        return 0
+                    }
+                    createOptions(childRow,permission); // Create options for this permission
+                });
+            });
+        }
+
+        
+        function createOptions(permissionRow,permission) {
+            const options = ['Create', 'Read', 'Update', 'Delete'];
+            let nextRow = permissionRow.nextElementSibling;
+            
+
+            
+            let optionRowsVisible = false;
+            while (nextRow && nextRow.classList.contains('option-row')) {
+                optionRowsVisible = true;
+                nextRow = nextRow.nextElementSibling;
+            }
+
+            
+            if (optionRowsVisible) {
+                nextRow = permissionRow.nextElementSibling;
+                while (nextRow && nextRow.classList.contains('option-row')) {
+                    nextRow.classList.toggle('show'); 
+                    nextRow = nextRow.nextElementSibling;
+                }
+            } else {
+                
+                options.forEach(option => {
+                    const optionRow = document.createElement('tr');
+                    optionRow.className = 'option-row show';
+                    console.log(optionRow);
+                     
+                    optionRow.innerHTML = `
+                        <td><input name="${permission} ${option}" type="checkbox" /></td>
+                        <td colspan="3">${option}</td>
+                    `;
+                    permissionRow.insertAdjacentElement('afterend', optionRow);
+                });
+            }
+        }
+
+        
+        document.querySelectorAll('#myTable tbody tr').forEach(row => {
+            row.addEventListener('click', function(event) {
+
+         
+                if (event.target.type == 'checkbox')
+                {
+                    return 0
+                }
+            
+           
+                event.stopPropagation();
+              
+
+                
+                let nextRow = row.nextElementSibling;
+                let childRowsVisible = false;
+
+                while (nextRow && nextRow.classList.contains('child-row') || nextRow.classList.contains('option-row')) {
+                    childRowsVisible = !nextRow.classList.toggle('show'); 
+                    childRowsVisible = nextRow.classList.toggle('hide');
+                    nextRow = nextRow.nextElementSibling;
+                }
+
+                
+                let allNextRows = row.nextElementSibling;
+                while (allNextRows) {
+                    if (allNextRows.classList.contains('option-row')) {
+                        allNextRows.classList.remove('show'); 
+                    }
+                    if (allNextRows.classList.contains('child-row')) {
+                        if (childRowsVisible) {
+                            allNextRows.classList.remove('show');
+                        }
+                    }
+                    allNextRows = allNextRows.nextElementSibling;
+                }
+
+                
+                if (!childRowsVisible) {
+                    createChildRows(row); 
+                }
+            });
+        });
+    </script>
+
+
+{{ data|json_script:"data" }}
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .child-row, .option-row {
+        display: none; /* Initially hidden */
+        background-color: #f9f9f9;
+    }
+
+    .child-row.show, .option-row.show {
+        display: table-row; /* Show when toggled */
+    }
+    .hide{
+        display: none;
+    }
+
+    .option-row {
+        background-color: #e9e9e9;
+    }
+</style>
+
+{% endblock %}

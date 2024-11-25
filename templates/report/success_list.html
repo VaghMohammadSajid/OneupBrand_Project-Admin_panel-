@@ -1,0 +1,169 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Bulk Product Upload" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Bulk Product Upload" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+
+{% block content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        
+
+    <div class="table-header">
+        <h3><i class="fas fa-file-import"></i>List out of Uploaded Data</h3>
+    </div>
+    <div class="table-responsive containerr" style="overflow: auto;">
+
+
+        <table class="table table-striped table-hover table-bordered">
+            <thead style="background-color: #230BB3 !important;color: #fff;">
+                <tr>
+              <th scope="col" style="font-weight:normal;">#</th>
+              <th scope="col" style="font-weight:normal;">UPC</th>
+              <th scope="col" style="font-weight:normal;">title</th>
+           
+              <th scope="col" style="font-weight:normal;">description</th>
+              <th scope="col" style="font-weight:normal;">Specification</th>
+              <th scope="col" style="font-weight:normal;">image</th>
+              <th scope="col" style="font-weight:normal;">product_type</th>
+              <th scope="col" style="font-weight:normal;">is_public</th>
+              <th scope="col" style="font-weight:normal;">is_discountable</th>
+              <th scope="col" style="font-weight:normal;">best_seller</th>
+              <th scope="col" style="font-weight:normal;">standard_rate</th>
+              <th scope="col" style="font-weight:normal;">num_in_stock</th>
+              <th scope="col" style="font-weight:normal;">brand</th>
+              <th scope="col" style="font-weight:normal;">first_category</th>
+              <th scope="col" style="font-weight:normal;">structure</th>
+              <th scope="col" style="font-weight:normal;">attributes</th>
+              <th scope="col" style="font-weight:normal;">recommended_products</th>
+              <th scope="col" style="font-weight:normal;">Parent_UPC</th>
+            
+              <th scope="col" style="font-weight:normal;">length</th>
+              <th scope="col" style="font-weight:normal;">width</th>
+              <th scope="col" style="font-weight:normal;">height</th>
+              <th scope="col" style="font-weight:normal;">weight</th>
+              <th scope="col" style="font-weight:normal;">supplier</th>
+              <th scope="col" style="font-weight:normal;">low_stock_threshold</th>
+              <th scope="col" style="font-weight:normal;">mrp</th>
+              <th scope="col" style="font-weight:normal;">discount</th>
+              <th scope="col" style="font-weight:normal;">price</th>
+              <th scope="col" style="font-weight:normal;">gst_rate</th>
+              <th scope="col" style="font-weight:normal;">error</th>
+              
+            </tr>
+            </thead>
+          <tbody>
+              {% for single in product %}
+            <tr>
+              <th scope="row">{{forloop.counter}}</th>
+              <td>{{single.upc}}</td>
+              <td>{{single.title}}</td>
+      
+              <td>
+                {% if single.description|length <= 50 %}
+                    {{ single.description }}
+                {% else %}
+                    <span>{{ single.description|slice:":50" }}</span>
+                    <span class="more">{{ single.description|slice:"50:" }}</span>
+                    <span class="toggle-btn" style="color: blue; cursor: pointer;">See More</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if single.Specification|length <= 50 %}
+                    {{ single.Specification }}
+                {% else %}
+                    <span>{{ single.Specification|slice:":50" }}</span>
+                    <span class="more">{{ single.Specification|slice:"50:" }}</span>
+                    <span class="toggle-btn" style="color: rgb(11, 11, 240); cursor: pointer;">See More</span>
+                {% endif %}
+            </td>
+              <td>{{single.image}}</td>
+              <td>{{single.product_type}}</td>
+              <td>{{single.is_public}}</td>
+              <td>{{single.is_discountable}}</td>
+              <td>{{single.best_seller}}</td>
+              <td>{{single.standard_rate}}</td>
+              <td>{{single.num_in_stock}}</td>
+              <td>{{single.brand}}</td>
+              <td>{{single.first_category}}</td>
+              <td>{{single.structure}}</td>
+              <td>{{single.attributes}}</td>
+              <td>{{single.recommended_products}}</td>
+              <td>{{single.Parent_UPC}}</td>
+             
+              <td>{{single.length}}</td>
+              <td>{{single.width}}</td>
+              <td>{{single.height}}</td>
+              <td>{{single.weight}}</td>
+              <td>{{single.supplier}}</td>
+              <td>{{single.low_stock_threshold}}</td>
+              <td>{{single.mrp}}</td>
+              <td>{{single.discount}}</td>
+              <td>{{single.price}}</td>
+              <td>{{single.gst_rate}}</td>
+              <td>{{single.error}}</td>
+  
+            </tr>
+           {% endfor %}
+          </tbody>
+        </table>
+  
+        </div>
+      
+        <style>
+          .containerr {
+            overflow-y: hidden;
+            /* white-space: nowrap;  */
+  
+              overflow: auto;
+              height: 600px;
+          }
+        
+         
+          
+        </style>
+      
+    
+    <style>
+        .more {
+            display: none;
+        }
+    
+        .show {
+            display: inline;
+        }
+    </style>
+    
+
+{% endblock %}
+
+

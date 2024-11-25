@@ -1,0 +1,136 @@
+{% extends 'oscar/dashboard/layout.html' %}
+
+{% block content %} 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  .invoice-details {
+    margin-bottom: 20px;
+  }
+  .details-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .left {
+    flex: 1;
+  }
+  .right {
+    flex: 1;
+    text-align: right;
+  }
+  .payment-details {
+    text-align: left; /* Align left */
+    margin-bottom: 10px;
+  }
+  .totals {
+    text-align: right; /* Align right */
+    margin-right: 20px
+  }
+  .contact-details {
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body id="printArea">
+  <div class="row" style="justify-content: space-between; padding: 5px 15px">
+    <h1>Invoice</h1>
+    <button class="btn mb-2" style="background-color: #230BB3 !important; color: #fff;" onclick="printAction()">Print PDF</button>
+  </div>
+  <div class="invoice-details">
+    <div class="invoice-details">
+        <div class="details-row">
+          <div class="left">
+            <p><strong>Invoice Order Id:</strong> {{context.order_obj}}</p>
+          </div>
+          <div class="right">
+            <p><strong>Date Time:</strong> {{context.tijkj}}</p>
+          </div>
+        </div>
+      </div>
+      <div class="shipping-details">
+        <div class="details-row">
+          <div class="left">
+            <p><strong>Shipping To:</strong><br>{{context.shipping}}</p>
+          </div>
+          <div class="right">
+            <p><strong>Billing Address:</strong><br>John Doe, 456 Street, City</p>
+          </div>
+        </div>
+      </div>
+  <table>
+    <thead>
+      <tr>
+        <th>S.No.</th>
+        <th>Product Details</th>
+        <th>Unit Price(Rs)</th>
+        <th>Qty</th>
+        <th>Total(Rs)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%for i in context.line_obj%}
+      <tr>
+        <td>{{i.sno}}</td>
+        <td>{{i.product}}</td>
+        <td>{{i.unit_price_incl_tax}}</td>
+        <td>{{i.quantity}}</td>
+        <td>{{i.line_price_incl_tax}}</td>
+      </tr>
+      {%endfor%}
+      <!-- Add more rows for other products -->
+    </tbody>
+  </table>
+  <div class="payment-details">
+    <p><strong>Payment Details:</strong></p>
+    <p><strong>Paid Date:</strong> 2023-08-25</p>
+  </div>
+  <div class="totals">
+    <p><strong>Sub Total:</strong> {{context.total}}</p>
+    <p><strong>Tax Amount:</strong> 0.00</p>
+    <p><strong>Shipping Amount:</strong> 0.00</p>
+    <p><strong>Coupon Discount:</strong> 0.00</p>
+    <p><strong>Product Discount:</strong> 0.00</p>
+    <p><strong>Convenience Fee:</strong> 0.00</p>
+    <p><strong>Total Amount:</strong> {{context.total}}</p>
+    <p><strong>Total Savings:</strong> 0.00</p>
+  </div>
+
+
+  
+</body>
+<script>
+  function printAction() {
+    // var printContents = document.getElementById('printArea').innerHTML;
+    // var originalContents = document.body.innerHTML;
+    // document.body.innerHTML = printContents;
+    window.print();
+    //document.body.innerHTML = originalContents;
+    //window.location.reload();
+  }
+
+</script>
+</html>
+
+  
+   {% endblock %} 

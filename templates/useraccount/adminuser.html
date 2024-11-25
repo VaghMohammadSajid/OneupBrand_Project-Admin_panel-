@@ -1,0 +1,86 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Admin User" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'admin-list' %}">{% trans "Admin List" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Add" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+    <div class="page-header">
+        <h1>Admin User {% block headertext %}{% endblock %}</h1>
+    </div>
+{% endblock %}
+{% block content %}
+
+<div class="table-header mr-3 ml-3">
+    <h3><i class="fas fa-user"></i> {% trans "Admin User" %}</h3>
+</div>
+<div class="card card-body mr-3 ml-3">
+     <form method='post' action="{% url 'AdminUser' %}">
+         {% csrf_token %}
+         <div class="row pt-1 pr-3 pl-3 pb-3">
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <label for="email">Email:<span style="color: red; font-size: small;">*</span></label>
+                     <input class="form-control" type="email" placeholder="Email" name="email" id="email">
+                     <span class="error-message" style="color: red;">{{ email_error }}</span>
+                 </div>
+                 <div class="form-group">
+                     <label for="last_name">Last Name:<span style="color: red; font-size: small;">*</span></label>
+                     <input class="form-control" type="text" placeholder="Last Name" name="last_name"
+                            id="last_name">
+                     <span class="error-message" style="color: red;">{{ last_name_error }}</span>
+                 </div>
+             </div>
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <label for="first_name">First Name:<span style="color: red; font-size: small;">*</span></label>
+
+                     <input class="form-control" type="text" placeholder="First Name" name="first_name"
+                            id="first_name">
+                     <span class="error-message" style="color: red;">{{ first_name_error }}</span>
+                 </div>
+                 <div class="form-group">
+                    <label for="id_title">select role<span style="color: red; font-size: small;">*</span></label>
+                    <select class="form-control" name="role" id="">
+                        {% for  i in all_role %}
+                        {% if i.id == current_role.id %}
+                        <option value="{{i.id}}" selected >{{i.role_name}} </option>
+                        {% else %}
+    
+                        <option value="{{i.id}}">{{i.role_name}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+             </div>
+             
+         </div>
+         {% block form_actions %}
+         <div class="row">
+             <div class="col-md-3">
+                 <button type="Save" class="btn" style="background-color: #230BB3 !important; color: #fff;">
+                     Save
+                 </button>
+             </div>
+         </div>
+         {% endblock form_actions %}
+         {% if search_result %}
+         <h1> {{ search_result }}</h1>
+         {% endif %}
+     </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,433 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Bulk Product Upload" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Bulk Product Upload" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="table-header">
+    <h3><i class="fas fa-file-import"></i> Bulk Product Upload</h3>
+</div>
+<div class="card card-body">
+    <div class="flex" style="display: flex; flex-direction: row; justify-content: space-between;">
+
+            <div>
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                <button type="submit"  class="btn" style="background-color: #230BB3 !important; color: #fff; margin-bottom: 1%;" >UPLOAD DATA TO ADMIN</button>
+                            </form>
+
+
+                            <!-- sucess and error message -->
+
+                            {% if error_message %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error_message }}
+                            </div>
+                            {% endif %}
+
+                            {% if messages %}
+                            <ul class="messages">
+                                <!-- {% for message in messages %}
+                                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                {% endfor %} -->
+                            </ul>
+                        {% endif %}
+                            <!-- sucess and error message -->
+
+            </div>
+            <style>
+                #progressBar {
+                  width: 300px;
+                  height: 20px;
+                  background-color: #f0f0f0;
+                  border: 1px solid #ccc;
+                  margin-bottom: 20px;
+                }
+
+                #progress {
+                  width: 0%;
+                  height: 100%;
+                  background-color: #4caf50;
+                }
+              </style>
+              <script>
+                async function startProgress() {
+        var progressBar = document.getElementById('progress');
+        var message_id = document.getElementById('response-message');
+        var width = 0;
+        var error_res = [];
+        var finished_upc = []
+
+        async function createProduct(data, total_items) {
+            try {
+
+                var postData = [JSON.stringify(data)];
+                const response = await fetch('/useraccount/erp-data/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData) // Convert data to JSON string
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                width += 100 / total_items;
+                progressBar.style.width = width + '%';
+                const responseData = await response.json();
+                const error_in_single_res = responseData.error_details;
+                if (error_in_single_res.length > 0) {
+                    var errorText = document.createTextNode(error_in_single_res[0].reason + " (Item Code: " + error_in_single_res[0].item_code + ") error");
+                    var newElement = document.createElement("li");
+                    newElement.appendChild(errorText);
+                    message_id.appendChild(newElement);
+                    const data = {
+                        id:error_in_single_res[0].item_code,
+                        reason :error_in_single_res[0].reason 
+
+                }
+                    error_res.push(data)
+                }
+                else{
+                    var errorText = document.createTextNode(data.id + " finished");
+                    var newElement = document.createElement("li");
+                    newElement.appendChild(errorText);
+                    message_id.appendChild(newElement);
+                    finished_upc.push(data.id)
+                }
+
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+
+        try {
+            const response = await fetch('/useraccount/product_upload_data/');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+
+            const json_data = data.upload_json.message.items;
+            const total_items = data.upload_json.message.total_items;
+            const Unique_id = data.id
+            for (const key in json_data) {
+                await createProduct(json_data[key], total_items);
+            }
+            
+            const body = {
+                succes_list:finished_upc,
+                error_list:error_res,
+                id:Unique_id
+            }
+            const response_status = await fetch('/useraccount/update-status/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    
+                    body:JSON.stringify(body)
+                });
+                const response_erp = await fetch('/task/send-status/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    
+                    body:JSON.stringify(body)
+                });
+            console.log(error_res,finished_upc);
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    }
+                </script>
+
+            <div>
+
+            <!-- <pre style="color: red; font-size: medium;">{{ json_data | safe }}</pre> -->
+            {% block form_actions %}
+                <div class="row">
+                    <div class="col-md-3 form-actions">
+
+                        {% if messages %}
+
+                        <div id="progressBar">
+                            <div id="progress"></div>
+                          </div>
+
+                          <button style="background-color: #230BB3 !important; color: #fff; width: 150px ;" onclick="startProgress()">Start Progress</button>
+
+                    {% endif %}
+
+
+                    </div>
+                </div>
+            {% endblock form_actions %}
+            <div id="progress-bar-container" style="display: none;">
+                <progress id="progress-bar" max="100" value="0"></progress>
+                <p id="progress-status">Uploading...</p>
+            </div>
+            <div id="response-message" >
+                <p id="error-details" style="color: red;"></p>
+                <a id="download-csv" href="#" download="errors.csv" style="display: none;">Download CSV</a>
+            </div>
+
+            </div>
+
+
+
+
+
+
+
+
+    </div>
+
+        <div>
+        </div>
+
+
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $("#upload-btn").click(function () {
+                    $("#progress-status").text("Uploading...");
+                    $("#response-message").hide();
+                    $("#progress-bar").css("background-color", "#007bff"); // Reset progress bar color
+
+                    $.ajax({
+                        url: "/useraccount/import_data/",
+                        type: "POST",
+                        dataType: 'json',
+
+                        data: {
+                            'id': {{id}}   // ignor  Data to send in request body
+                            },
+                        beforeSend: function () {
+                            $("#upload-btn").prop("disabled", true);
+                            $("#progress-bar-container").show();
+                        },
+                        xhr: function () {
+                            var xhr = new window.XMLHttpRequest();
+                            xhr.upload.addEventListener("progress", function (evt) {
+                                if (evt.lengthComputable) {
+                                    var percentComplete = (evt.loaded / evt.total) * 100;
+                                    $("#progress-bar").val(percentComplete);
+                                }
+                            }, false);
+                            return xhr;
+                        },
+                        success: function (response) {
+                            $("#progress-status").text("Upload Complete");
+                            $("#response-message").html(
+                                "Total items: " + response.total_items + "<br>" +
+                                "Parent Items Created: " + response.parent_item_created + "<br>" +
+                                "Parent Item Skipped: " + response.parent_items_skipped_of_issue + "<br>" +
+                                "Child Item Created: " + response.child_created_count + "<br>" +
+                                "Child Item Skipped: " + response.child_item_skipped
+                            ).show();
+                            $("#progress-bar").css("background-color", "#28a745"); // Set progress bar color to green
+
+                            // Display error list if present
+                            if (response.error_details && response.error_details.length > 0) {
+                                var errorDetails = "<p>Error Details:</p><ul>";
+                                $.each(response.error_details, function (index, errorItem) {
+                                    errorDetails += "<li>" + errorItem.reason + " (Item Code: " + errorItem.item_code + ")</li>";
+                                });
+                                errorDetails += "</ul>";
+                                $("#response-message").append(errorDetails);
+
+                                // Construct CSV data
+                                var csvData = "Item Code,Reason\n";
+                                $.each(response.error_details, function (index, errorItem) {
+                                    csvData += errorItem.item_code + "," + errorItem.reason + "\n";
+                                });
+
+                                // Create and download CSV file
+                                var encodedData = encodeURIComponent(csvData);
+                                $("#download-csv").attr("href", "data:text/csv;charset=utf-8," + encodedData);
+                                $("#download-csv").show();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            var errorMessage = "Error: ";
+                            if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                // If the response contains errors, concatenate them into the errorMessage
+                                $.each(xhr.responseJSON.errors, function (key, value) {
+                                    errorMessage += value.join(", ") + ". ";
+                                });
+                                $("#error-details").text(errorMessage).show(); // Display error details
+                            } else {
+                                // If no specific errors are provided, use the default error message
+                                errorMessage += xhr.responseText;
+                                $("#response-message").text(errorMessage).show();
+                            }
+                            $("#progress-bar").css("background-color", "#dc3545"); // Set progress bar color to red
+                        },
+                        complete: function () {
+                            $("#upload-btn").prop("disabled", false);
+                        }
+                    });
+                });
+            });
+        </script>
+</div>
+    <div class="table-header">
+        <h3><i class="fas fa-file-import"></i>List out of Uploaded Data</h3>
+    </div>
+    <div class="table-responsive containerr" style="overflow: auto;">
+
+
+        <table class="table table-striped table-hover table-bordered">
+            <thead style="background-color: #230BB3 !important;color: #fff;">
+                <tr>
+              <th scope="col" style="font-weight:normal;">#</th>
+              <th scope="col" style="font-weight:normal;">UPC</th>
+              <th scope="col" style="font-weight:normal;">title</th>
+           
+              <th scope="col" style="font-weight:normal;">description</th>
+              <th scope="col" style="font-weight:normal;">Specification</th>
+              <th scope="col" style="font-weight:normal;">image</th>
+              <th scope="col" style="font-weight:normal;">product_type</th>
+              <th scope="col" style="font-weight:normal;">is_public</th>
+              <th scope="col" style="font-weight:normal;">is_discountable</th>
+              <th scope="col" style="font-weight:normal;">best_seller</th>
+              <th scope="col" style="font-weight:normal;">standard_rate</th>
+              <th scope="col" style="font-weight:normal;">num_in_stock</th>
+              <th scope="col" style="font-weight:normal;">brand</th>
+              <th scope="col" style="font-weight:normal;">first_category</th>
+              <th scope="col" style="font-weight:normal;">structure</th>
+              <th scope="col" style="font-weight:normal;">attributes</th>
+              <th scope="col" style="font-weight:normal;">recommended_products</th>
+              <th scope="col" style="font-weight:normal;">Parent_UPC</th>
+            
+              <th scope="col" style="font-weight:normal;">length</th>
+              <th scope="col" style="font-weight:normal;">width</th>
+              <th scope="col" style="font-weight:normal;">height</th>
+              <th scope="col" style="font-weight:normal;">weight</th>
+              <th scope="col" style="font-weight:normal;">supplier</th>
+              <th scope="col" style="font-weight:normal;">low_stock_threshold</th>
+              <th scope="col" style="font-weight:normal;">mrp</th>
+              <th scope="col" style="font-weight:normal;">discount</th>
+              <th scope="col" style="font-weight:normal;">price</th>
+              <th scope="col" style="font-weight:normal;">gst_rate</th>
+              <th scope="col" style="font-weight:normal;">erp_status</th>
+              
+            </tr>
+            </thead>
+          <tbody>
+              {% for single in child %}
+            <tr>
+              <th scope="row">{{forloop.counter}}</th>
+              <td>{{single.upc}}</td>
+              <td>{{single.title}}</td>
+      
+              <td>
+                {% if single.description|length <= 50 %}
+                    {{ single.description }}
+                {% else %}
+                    <span>{{ single.description|slice:":50" }}</span>
+                    <span class="more">{{ single.description|slice:"50:" }}</span>
+                    <span class="toggle-btn" style="color: blue; cursor: pointer;">See More</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if single.Specification|length <= 50 %}
+                    {{ single.Specification }}
+                {% else %}
+                    <span>{{ single.Specification|slice:":50" }}</span>
+                    <span class="more">{{ single.Specification|slice:"50:" }}</span>
+                    <span class="toggle-btn" style="color: rgb(11, 11, 240); cursor: pointer;">See More</span>
+                {% endif %}
+            </td>
+              <td>{{single.image}}</td>
+              <td>{{single.product_type}}</td>
+              <td>{{single.is_public}}</td>
+              <td>{{single.is_discountable}}</td>
+              <td>{{single.best_seller}}</td>
+              <td>{{single.standard_rate}}</td>
+              <td>{{single.num_in_stock}}</td>
+              <td>{{single.brand}}</td>
+              <td>{{single.first_category}}</td>
+              <td>{{single.structure}}</td>
+              <td>{{single.attributes}}</td>
+              <td>{{single.recommended_products}}</td>
+              <td>{{single.Parent_UPC}}</td>
+             
+              <td>{{single.length}}</td>
+              <td>{{single.width}}</td>
+              <td>{{single.height}}</td>
+              <td>{{single.weight}}</td>
+              <td>{{single.supplier}}</td>
+              <td>{{single.low_stock_threshold}}</td>
+              <td>{{single.mrp}}</td>
+              <td>{{single.discount}}</td>
+              <td>{{single.price}}</td>
+              <td>{{single.gst_rate}}</td>
+              <td>{{single.product_status}}</td>
+  
+            </tr>
+           {% endfor %}
+          </tbody>
+        </table>
+  
+        </div>
+      
+        <style>
+          .containerr {
+            overflow-y: hidden;
+            /* white-space: nowrap;  */
+  
+              overflow: auto;
+              height: 600px;
+          }
+        
+         
+          
+        </style>
+      <script>
+        document.querySelectorAll('.toggle-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var moreText = this.previousElementSibling;
+                moreText.classList.toggle('show');
+                if (this.innerText === 'See More') {
+                    this.innerText = 'See Less';
+                } else {
+                    this.innerText = 'See More';
+                }
+            });
+        });
+    </script>
+    
+    <style>
+        .more {
+            display: none;
+        }
+    
+        .show {
+            display: inline;
+        }
+    </style>
+    
+
+{% endblock %}
+
+

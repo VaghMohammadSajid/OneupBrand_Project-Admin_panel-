@@ -1,0 +1,131 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+{{ title }} {% trans "Voucher Requests" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'voucher-request-user-list' %}">{% trans "Voucher Requests" %}</a></li>
+        <li class="breadcrumb-item">{{ voucher_details.uuid }}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1>{{ voucher_details.voucher_request_name }}</h1>
+</div>
+<style>
+    #default > div > div > div.page-content > table.table.table-striped.table-bordered.table-hover > tbody > tr > td > a {
+        color: #230BB3;
+    }
+    #voucherForm > span{
+        width: 94.2px !important;
+    }
+</style>
+{% endblock header %}
+
+{% block dashboard_content %}
+
+
+<div class="table-header">
+    <div class="float-right" style="font-weight: normal">{% trans "Submitted Date:" %} {{ voucher_details.submission_date|date:"d/m/Y H:i" }}
+    </div>
+    <h2>{% trans "Voucher Requests Details" %}</h2>
+</div>
+
+<table class="table table-striped table-bordered">
+
+    <tbody>
+        <!--            <tr>-->
+        <!--                <th>{% trans "Voucher Name" %}</th>-->
+        <!--                <td>{{ voucher_details.voucher_request_name }}</td>-->
+        <!--            </tr>-->
+
+        <tr>
+            <th>{% trans "Client UserName" %}</th>
+            <td>{{ voucher_details.user.first_name }} {{ voucher_details.user.last_name }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Account Id" %}</th>
+            <td>{{ account_id }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Company Name" %}</th>
+            <td>{{ company_name }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Category" %}</th>
+            <td style="width: 1050px;">
+                {% if category == "All" %}
+                {{ category }}
+                {% else %}
+                {% for category in voucher_details.select_categories.all %}
+                {{ category.name }}
+                {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                {% endif %}
+            </td>
+        </tr>
+        <!--            <tr>-->
+        <!--                <th>{% trans "Voucher Type" %}</th>-->
+        <!--                <td>{{ voucher_details.voucher_type }}</td>-->
+        <!--            </tr>-->
+        <tr>
+            <th>{% trans "No.Of Vouchers" %}</th>
+            <td>{{ voucher_details.no_of_vouchers }}</td>
+        </tr>
+        <!--            <tr>-->
+        <!--                <th>{% trans "Clubable or Non-Clubable" %}</th>-->
+        <!--                <td>{{ voucher_details.club_type }}</td>-->
+        <!--            </tr>-->
+        <!--            <tr>-->
+        <!--                <th>{% trans "Gst Type" %}</th>-->
+        <!--                <td>{{ voucher_details.gst_type }}</td>-->
+        <!--            </tr>-->
+        <!--            <tr>-->
+        <!--                <th>{% trans "Shipping Type" %}</th>-->
+        <!--                <td>{{ voucher_details.shipping_type }}</td>-->
+        <!--            </tr>-->
+        <tr>
+            <th>{% trans "Amounts" %}</th>
+            <td>{{ voucher_details.amount }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Status" %}</th>
+            <td>
+                <form method="post" action="{% url 'voucher-request-user-status' voucher_details.id %}" id="voucherForm">
+                    {% csrf_token %}
+                    <select name="action" id="statusDropdown">
+                        <option value="Requested" {% if voucher_details.status == 'Requested' %}selected{% endif %}>{% trans "Requested" %}</option>
+                        <option value="Created" {% if voucher_details.status == 'Created' %}selected{% endif %}>{% trans "Created" %}</option>
+                        <option value="Closed" {% if voucher_details.status == 'Closed' %}selected{% endif %}>{% trans "Closed" %}</option>
+                    </select>
+                </form>
+
+                <script type="text/javascript">
+                    document.addEventListener("DOMContentLoaded", function() {
+                        // Initialize the select2 dropdown
+                        $('#statusDropdown').select2();
+
+                        // Add event listener for select2 change event
+                        $('#statusDropdown').on('select2:select', function () {
+                            console.log('Dropdown value changed to: ', this.value);
+                            document.getElementById("voucherForm").submit(); // Submit the form
+                        });
+                    });
+                </script>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock dashboard_content %}

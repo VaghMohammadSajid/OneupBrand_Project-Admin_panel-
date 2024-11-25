@@ -1,0 +1,96 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Get Help" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item">{% trans "Get Help" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>Get Help {% block headertext %}{% endblock %}</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+<!-- search -->
+
+<!--{% block search_products %}-->
+<!--        <div class="table-header">-->
+<!--            <h3><i class="fas fa-search"></i> {% trans "Search Contact" %}</h3>-->
+<!--        </div>-->
+<!--        <div class="card card-body">-->
+<!--            <form method="post" class="form-inline">-->
+<!--                {% csrf_token %}-->
+<!--                <label for="email">Email:</label>-->
+<!--                <input id="email" type="" name="email" value="{% if searched_email %}{{ searched_email }}{% endif %}" class="form-control mr-2"/>-->
+<!--                <button type="submit" class="btn btn-sm" style="background-color: #230BB3 !important; color: #ffffff;" data-loading-text="{% trans 'Searching...' %}">-->
+<!--                    <i class="fas fa-search"></i> {% trans "Search" %}-->
+<!--                </button>-->
+<!--            </form>-->
+<!--            -->
+<!--        </div>-->
+<!--    {% endblock %}-->
+<!-- search -->
+    <div class="table-header">
+        <h3><i class="fas fa-user"></i> {% trans "Get Help" %}</h3>
+    </div>
+    <div class="table-responsive">
+
+
+        <table class="table table-striped table-hover table-bordered">
+            <thead style="background-color: #230BB3 !important; color: #fff;">
+            <tr>
+                <th style="font-weight:normal;">S.No</th>
+                <th style="font-weight:normal;">Email</th>
+                <th style="font-weight:normal;">Full Name</th>
+                <th style="font-weight:normal;">Mobile No.</th>
+                <th style="font-weight:normal;">Date Updated</th>
+                <th style="font-weight:normal;">Action</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for get_help in get_help_data %}
+                <form method="post">
+                    {% csrf_token %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <a style="color: #230BB3;" href="{% url 'details-get_help' pk=get_help.id %}">
+                                {{ get_help.email }}
+                            </a>
+                        </td>
+                        <td>{{ get_help.first_name }} {{ get_help.last_name }}</td>
+                        <td>{{ get_help.phone_number}}</td>
+                        <td>{{ get_help.created_at|date:"d/m/Y H:i"}}</td>
+                        <td>
+                            <a href="{% url 'delete-get_help' pk=get_help.id %}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure you want to delete?')"><i class="fas fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                </form>
+            {% empty %}
+                <tr>
+                    <td colspan="7">No Get Help Data found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}
+
+

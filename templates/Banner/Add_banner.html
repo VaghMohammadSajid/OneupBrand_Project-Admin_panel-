@@ -1,0 +1,251 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Add Banner" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'banner-list' %}">{% trans "Banners" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Add" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+<div class="page-header">
+    <h1>Add New Banner {% block headertext %}{% endblock %}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="table-header mr-3 ml-3">
+    <h3><i class="fas fa-folder"></i> {% trans "Add New Banner" %}</h3>
+</div>
+<div class="card card-body mr-3 ml-3 mb-3">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+      <!-- <div class="form-group row">
+            <label for="image" class="col-sm-2 col-form-label">Image:</label>
+            <div class="col-sm-10">
+                <input type="file" name="image" id="image-input" class="form-control" style="margin-bottom: 10px;" onchange="previewImage('image-input', 'image-preview');" required>
+                <img id="image-preview" src="#" alt="Image Preview" class="img-fluid" style="max-width: 200px; max-height: 200px; display: none;">
+            </div>
+        </div> -->
+        <div class="row pr-3 pl-3">
+             <div class="col-md-6">
+                 <div class="form-group">
+                     <label for="image">Image:<span
+                             style="color: red; font-size: large;">*</span></label>
+                     <input type="file" name="image" class="form-control image-input" id="image" required>
+                     <img class="preview-image m-1" style="max-width: 100px; max-height: 100px; display: none;">
+
+                 </div>
+                 <div class="form-group">
+                     <label for="category">Category:<span
+                             style="color: red; font-size: large;">*</span></label>
+                     <select id="category" name="category1" class="form-control category-select" oninput="logBannercategory(this.value)" required>
+                         <option value="" selected>Select a category</option>
+                         {% for category in categories %}
+                         <option value="{{ category.id }}">{{ category.name }}</option>
+                         {% endfor %}
+                     </select>
+                 </div>
+                 <div class="form-group">
+                    <label for="title">Link:</label>
+                    <input type="text" name="Link" id="Link" placeholder="Link" oninput="logBannerLink(this.value)" class="form-control">
+                 </div>
+                 <div class="form-group">
+                    <label for="active">Active:</label>
+                    <input type="checkbox" class="form-control h-auto w-auto" name="active" id="active" checked>
+                </div>
+             </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="image">Logo:<span style="color: red; font-size: large;">*</span></label>
+                    <input type="file" name="logo" class="form-control image-input-two" required>
+                    <img class="preview-image-two m-1" style="max-width: 100px; max-height: 100px; display: none;">
+                </div>
+                <div class="form-group">
+                    <label for="sub_category">Child Categories:</label>
+                    <select name="sub_category1" class="form-control sub-category-select">
+                        <option value="">Select a subcategory</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="title">Title:</label>
+                    <input type="text" name="title" id="title" placeholder="Title" class="form-control">
+                </div>
+            </div>
+        </div>
+
+
+        {% block form_actions %}
+            <div class="form-actions">
+                <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Save</button>
+            </div>
+        {% endblock form_actions %}
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // JavaScript code for category dropdown change event for the first row
+        $('.category-select[name="category1"]').on('change', function () {
+            var parentCategoryId = $(this).val();
+            var subCategorySelect = $('.sub-category-select');
+
+            if (parentCategoryId) {
+                $.ajax({
+                    url: '{% url "get_child_categories" %}',
+                    method: 'GET',
+                    data: {'parent_category_id': parentCategoryId},
+                    success: function (data) {
+                        subCategorySelect.empty();
+
+                        if (data.length === 0) {
+                            subCategorySelect.append('<option value="">No subcategory available</option>');
+                        } else {
+                            subCategorySelect.append('<option value="">Select a subcategory</option>');
+                            for (var i = 0; i < data.length; i++) {
+                                subCategorySelect.append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                            }
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error fetching child categories:', error);
+                    }
+                });
+            } else {
+                subCategorySelect.empty();
+                subCategorySelect.append('<option value="">Select a subcategory</option>');
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // JavaScript code for image input change event
+        $('.image-input').on('change', function () {
+            var input = this;
+            var preview = $(this).closest('.form-group').find('.preview-image');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.attr('src', e.target.result);
+                    preview.show();
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.hide();
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // JavaScript code for image input change event
+        $('.image-input-two').on('change', function () {
+            var input = this;
+            var preview = $(this).closest('.form-group').find('.preview-image-two');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.attr('src', e.target.result);
+                    preview.show();
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.hide();
+            }
+        });
+    });
+</script>
+<!-- <script>
+    $(document).ready(function () {
+        // JavaScript code for category dropdown change event
+        $('.category-select').on('change', function () {
+            var selectedCategory = $(this).val();
+            var linkInput = $('#Link');
+
+            if (selectedCategory) {
+                linkInput.prop('disabled', true);
+            } else {
+                linkInput.prop('disabled', false);
+            }
+        });
+
+        // JavaScript code for Link input change event
+        $('#Link').on('input', function () {
+            var linkValue = $(this).val();
+            var categorySelect = $('.category-select');
+
+            if (linkValue) {
+                categorySelect.prop('disabled', true);
+            } else {
+                categorySelect.prop('disabled', false);
+            }
+        }) });
+    </script> -->
+
+
+    <script>
+        // Initial log
+        console.log("Script is running!");
+        console.log("Initial Banner Link:", "{{ banner.Link }}");
+
+        // Function to log changes and set the values for condition
+        function logBannerLink(value) {
+            console.log("Updated Banner Link:", value);
+            var categorySelect = document.querySelector('.category-select');
+            var linkInput = document.getElementById('Link');
+            var subcategoryselect = document.querySelector('.sub-category-select');
+
+
+            // Set the condition values based on whether there's a value
+            categoryValue = categorySelect.value !== '';
+            logBannerLinkValue = value !== '';
+
+            // Disable/enable the category select based on the condition
+            categorySelect.disabled = logBannerLinkValue;
+            subcategoryselect.disabled = logBannerLinkValue;
+
+            // Disable/enable the link input based on the condition
+            linkInput.disabled = categoryValue;
+        }
+
+        // Call the function initially with the current value
+        // logBannerLink("{{ banner.Link }}");
+    </script>
+
+
+        <script>
+
+
+            // Function to log changes and set the values for condition
+            function logBannercategory(value) {
+                console.log("Updated category value:", value);
+
+                var linkInput = document.getElementById('Link');
+
+                // Disable/enable the link input based on the condition
+                linkInput.disabled = value !== '';
+            }
+        </script>
+
+{% endblock %}

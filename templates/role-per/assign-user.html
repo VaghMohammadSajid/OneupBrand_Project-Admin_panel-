@@ -1,0 +1,82 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Add-Role" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'Manage-NewsLetter-Template' %}">{% trans "Add-Role " %}</a>
+            </li>
+            <li class="breadcrumb-item">{% trans "User and Role" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>Create a role</h1>
+    </div>
+{% endblock %}
+{% block content %}
+
+
+<form action="" method="post">
+    {% csrf_token %}
+    <div>
+        <select name="user">
+            <option value="" selected  disabled ></option>
+            {% for i in all_user %}
+           
+            <option value="{{i.username}}" >{{i.username}}</option>
+            
+           {%  endfor %}
+           
+            
+          </select>
+
+    
+    <div>
+        <select name="role_type" >
+            <option value="" selected  disabled ></option>
+            {% for i in role_type %}
+           
+            <option value="{{i.role_name}}" >{{i.role_name}}</option>
+            
+           {%  endfor %}
+           
+            
+          </select>
+</div>
+   
+ 
+<button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">start</button>
+</form>
+    </div>
+
+    <style>
+      
+  
+        select {
+          width: 200px;
+          height: 200px;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          overflow-y: auto;
+          background-color: white;
+        }
+        
+        option {
+          padding: 5px;
+        }
+          </style>
+    </div>
+
+{% endblock %}

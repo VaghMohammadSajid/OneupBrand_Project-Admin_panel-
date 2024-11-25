@@ -1,0 +1,114 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Banner List" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Banners List" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+<div class="page-header">
+    <a href="{% url 'add-banner' %}" class="btn float-right" style="background-color: #230BB3 !important; color: #fff;"><i class="fas fa-plus-circle"></i> Add New</a>
+    <h1>Banners List {% block headertext %}{% endblock %}</h1>
+</div>
+
+{% endblock %}
+
+{% block content %}
+    <div class="table-header">
+        <h3><i class="fas fa-folder"></i> {% trans "Banners" %}</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+            <thead style="background-color: #230BB3 !important; color: #fff;">
+                <tr>
+                    <th style="font-weight: normal;">S.No</th>
+                    <th style="font-weight: normal;">Image</th>
+                    <th style="font-weight: normal;">Title</th>
+                    <th style="font-weight: normal;">Category</th>
+                    <th style="font-weight: normal;">Link</th>
+                    <th style="font-weight: normal;">Status</th><!-- Move the Edit column before the Action column -->
+                    <th style="font-weight: normal;">Date Updated</th>
+                    <th style="font-weight: normal;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for banner in banners %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><img src="{{ banner.image.url }}" alt="Banner {{ banner.pk }}" class="img-fluid" style="max-width: 80px; max-height: 80px;"></td>
+                        <td>{{ banner.title }}</td>
+                        <td>
+                            {% if banner.category %}
+                                {{ banner.category.name }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if banner.link %}
+                                {{ banner.link }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'toggle-banner' banner.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn {% if banner.active %}btn-success{% else %}btn-danger{% endif %} btn-sm">
+                                    {% if banner.active %}Active{% else %}Inactive{% endif %}
+                                </button>
+                            </form>
+                        </td>
+                        <td>{{ banner.current_date|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'edit-banner' banner.pk %}" class="btn btn-sm" style="background-color: #230BB3 !important; color: #fff;"><i class="fas fa-edit"></i></a>
+                            <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteBannerModal{{ banner.pk }}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                            <!-- Delete Banner Modal -->
+                            <div class="modal fade" id="deleteBannerModal{{ banner.pk }}" tabindex="-1" role="dialog" aria-labelledby="deleteBannerModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteBannerModalLabel">Delete Banner</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete this banner?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <form method="post" action="{% url 'delete-banner' banner.pk %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">
+                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                <tr>
+                    <td colspan="12">No Banner found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

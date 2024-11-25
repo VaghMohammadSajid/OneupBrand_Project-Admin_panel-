@@ -1,0 +1,596 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+{% load static %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+{{ title }} {% trans "Add New Client" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard"%}</a></li>
+        <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'client-list' %}">{% trans "Client List" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Add" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1>{% trans "Add New Client" %} {% block headertext %}{% endblock %}</h1>
+</div>
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .spinner {
+        width: 35px;
+        border-radius: 50%;
+        border: 4px solid #ccc;
+        border-top-color: #333;
+        animation: spin 1s infinite linear;
+        /* Adjust margin as needed */
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if not client_id %}
+<form class="{% if client_id %}hidden{% endif %}" action="{% url 'ClientUser' %}" method="post">
+    {% csrf_token %}
+
+    <div class="table-header mr-3 ml-3">
+        <h3><i class="fas fa-user-plus"></i> {% trans "Client Verification and Register" %}</h3>
+    </div>
+    <div class="card card-body mr-3 ml-3">
+        <div class="row mr-3 ml-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="primary_contact_person">{% trans "Primary Contact Person" %}:<span
+                            style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="{% trans 'Primary Contact Person' %}"
+                        name="primary_contact_person" id="primary_contact_person" value="{{ primary_contact_person }}">
+                    <span class="error-message" style="color: red;">{{ primary_contact_person_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="email">{% trans "Email" %}:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="email" placeholder="{% trans 'Email' %}" name="email" id="email"
+                        value="{{ email }}">
+                    <span class="error-message" style="color: red;">{{ email_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="bussiness_name">{% trans "Business Name" %}:<span
+                            style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="{% trans 'Business Name' %}"
+                        name="bussiness_name" id="bussiness_name" value="{{ bussiness_name }}">
+                    <span class="error-message" style="color: red;">{{ bussiness_name_error }}</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="designation">{% trans "Designation" %}:<span
+                            style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="{% trans 'Designation' %}" name="designation"
+                        id="designation" value="{{ designation }}">
+                    <span class="error-message" style="color: red;">{{ designation_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="mobile_no">{% trans "Mobile Number" %}:<span
+                            style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="number" placeholder="{% trans 'Mobile Number' %}" name="mobile_no"
+                        id="mobile_no" value="{{ mobile_no }}">
+                    <span class="error-message" style="color: red;">{{ mobile_no_error }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row ml-1">
+            <div class="col-md-12 text-left">
+                <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;"
+                    data-loading-text="Saving...">{% trans "Next" %} <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+</form>
+{% elif client_id and not onboarding_gst_verify %}
+<form class="{% if onboarding_gst_verify %}hidden{% endif %}" action="{% url 'ClientOnboardingStepOne' %}"
+    method="post">
+    {% csrf_token %}
+    <div class="table-header mr-3 ml-3">
+        <h3><i class="fas fa-solid fa-money-check-dollar"></i> {% trans "GST Verification" %}</h3>
+    </div>
+    <div class="card card-body mr-3 ml-3">
+        <div class="row pt-1 pr-3 pl-3 pb-3">
+            <div class="col-md-6">
+                <input type="text" name="request_user" value="{{ client_id }}" hidden>
+                <div class="form-group">
+                    <label for="gst_no">{% trans "GST Number" %}:<span
+                            style="color: red; font-size: small;">*</span></label>
+                    <div class="input-group flex " >
+                        <input class="form-control" type="text" id="gstInput" name="gst_no" value="{{ gst_no }}" placeholder="Enter GST Number">
+                        <button type="button" id="verifyButton" onclick="sendGSTNumber()" style="background-color: #230BB3 !important; color: #fff;">Verify</button>
+                        <div>
+                            <div id="loadingSpinner" class="spinner"  style="height: 100%; display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fields to be shown after GST verification -->
+                <div id="additional-fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="pancard_no">{% trans "Pancard Number" %}:</label>
+                        <input class="form-control" type="text" placeholder="{% trans 'Pancard Number' %}"
+                            name="pancard_no" id="pancard_no" value="{{ pancard_no }}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="additional-fields-right" style="display: none;">
+                    <div class="form-group">
+                        <label for="date_of_establishment">{% trans "Date Of Establishment" %}:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="date" placeholder="{% trans 'Date Of Establishment' %}"
+                            name="date_of_establishment" id="date_of_establishment" value="{{ date_of_establishment }}">
+                        <span class="error-message" style="color: red;">{{ date_of_establishment_error }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row ml-1">
+            <div class="col-md-12 text-left">
+                <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">{% trans "Next" %} <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+</form>
+{% elif client_id and onboarding_gst_verify and not bussiness_details %}
+<form class="{% if bussiness_details %}hidden{% endif %}" action="{% url 'ClientOnboardingStepTwo' %}" method="post">
+    {% csrf_token %}
+    <!-- Onboarding Bussiness Data -->
+    <div class="table-header mr-3 ml-3">
+        <h3><i><img src="{% static 'oscar/img/ui/bussiness.png' %}"
+                    style="solid-black max-width: 18px; max-height: 18px;"></i> {% trans "Bussiness Verification" %}
+        </h3>
+    </div>
+    <div class="card card-body mr-3 ml-3">
+        <div class="row pt-1 pr-3 pl-3 pb-3">
+            <div class="col-md-6">
+                <input type="number" name="onboarding_gst_verify" value="{{ onboarding_gst_verify }}" hidden>
+                <div class="form-group">
+                    <label for="first_company_type">First Company Type:<span
+                            style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="First Company Type" name="first_company_type"
+                        id="first_company_type" value="{{ first_company_type }}">
+                    <span class="error-message" style="color: red;">{{ company_type_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="website_link">Website Link:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Website Link" name="website_link"
+                        id="website_link" value="{{ website_link }}">
+                    <span class="error-message" style="color: red;">{{ website_link_error }}</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="industry_type">Industry Type:<span
+                            style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Industry Type" name="industry_type"
+                        id="industry_type" value="{{ industry_type }}">
+                    <span class="error-message" style="color: red;">{{ industry_type_error }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-left">
+                <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Next <i
+                        class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+</form>
+{% elif client_id and onboarding_gst_verify and bussiness_details and not onboarding_bank_details %}
+<form class="{% if onboarding_bank_details %}hidden{% endif %}" action="{% url 'ClientOnboardingStepThree' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- Onboarding Alternative Data -->
+    <div class="table-header mr-3 ml-3">
+        <h3><i class="fas fa-home"></i> {% trans "Bank Verification" %}</h3>
+    </div>
+    <div class="card card-body mr-3 ml-3">
+        <div class="row pt-1 pr-3 pl-3 pb-3">
+            <div class="col-md-6">
+                <input type="number" name="onboarding_bussiness_details" value="{{ bussiness_details }}" hidden>
+           
+                <div class="form-group">
+                    <label for="upload_gst">Upload Gst:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="file" placeholder="Upload Gst" name="upload_gst" id="upload_gst"
+                        value="{{ upload_gst }}">
+                    <span class="error-message" style="color: red;">{{ upload_gst_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="upload_gst">Upload MSME:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="file" placeholder="Upload MSME" name="msme" id="msme"
+                        value="{{ msme }}">
+                    <span class="error-message" style="color: red;">{{ msme_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="upload_gst">Upload Aadhar Card:<span
+                            style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="file" placeholder="Upload Aadhar Card"
+                        name="aadhar" id="cancelation_letter" value="{{ aadhar }}">
+                    <span class="error-message" style="color: red;">{{ aadhar_error }}</span>
+                </div>
+
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="upload_pan">Upload PAN Card:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="file" name="upload_pan" id="upload_pan"
+                        placeholder="Upload PAN Card" value="{{ upload_pan }}">
+                    <span class="error-message" style="color: red;">{{ upload_pan_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="upload_pan">Upload Certificate of Corporation:<span
+                            style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="file" name="certificate_of_corporation"
+                        id="certificate_of_corporation" placeholder="Upload Certificate of Corporation"
+                        value="{{ certificate_of_corporation }}">
+                    <span class="error-message" style="color: red;">{{ certificate_of_corporation_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="upload_pan">Upload Authorization Letter:<span
+                            style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="file" name="authorization_letter" id="authorization_letter"
+                        placeholder="Upload Authorization Letter" value="{{ authorization_letter }}">
+                    <span class="error-message" style="color: red;">{{ authorization_letter_error }}</span>
+                </div>
+            </div>
+        </div>
+        <!-- Save button row -->
+        <div class="row">
+            <div class="col-md-12 text-left">
+                <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Next <i
+                        class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {% if search_result %}
+    <h1>{{ search_result }}</h1>
+    {% endif %}
+</form>
+{% elif client_id and onboarding_gst_verify and bussiness_details and onboarding_bank_details and not onboarding_comm_details %}
+<form class="{% if onboarding_comm_details %}hidden{% endif %}" action="{% url 'ClientOnboardingStepFour' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- Onboarding Alternative Data -->
+    <div class="table-header mr-3 ml-3">
+        <h3><i><img src="{% static 'oscar/img/ui/alter.jpg' %}" style=" max-width: 20px; max-height: 20px;"></i> {% trans "Onboarding Communication" %}</h3>
+    </div>
+    <div class="card card-body mr-3 ml-3">
+        <div class="row pt-1 pr-3 pl-3 pb-3">
+            <input type="number" name="onboarding_bank_details" value="{{ onboarding_bank_details }}" hidden>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="communication_address">Communication Address:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="communication address" name="communication_address" id="communication_address" value="{{ communication_address }}">
+                    <span class="error-message" style="color: red;">{{ communication_address_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="communication_state">Communication State :<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="communication state" name="communication_state" id="communication_state" value="{{ communication_state }}">
+                    <span class="error-message" style="color: red;">{{ communication_state_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="communication_postal_code">Communication Postal Code :<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="communication postal code" name="communication_postal_code" id="communication_postal_code" value="{{ communication_postal_code }}">
+                    <span class="error-message" style="color: red;">{{ communication_postal_code_error }}</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="communication_city">Communication City :<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="communication city" name="communication_city" id="communication_city" value="{{ communication_city }}">
+                    <span class="error-message" style="color: red;">{{ communication_city_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="communication_country">Communication Country:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="communication country" name="communication_country" id="communication_country" value="{{ communication_country }}">
+                    <span class="error-message" style="color: red;">{{ communication_country_error }}</span>
+                </div>
+            </div>
+        </div>
+        <!-- Save button row -->
+        <div class="row">
+            <div class="col-md-12 text-left">
+                <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Next <i
+                        class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {% if search_result %}
+    <h1>{{ search_result }}</h1>
+    {% endif %}
+</form>
+{% elif client_id and onboarding_gst_verify and bussiness_details and onboarding_bank_details and onboarding_comm_details and not onboarding_reg_details  %}
+<form class="{% if onboarding_reg_details %}hidden{% endif %}" action="{% url 'ClientOnboardingStepFive' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- Onboarding Alternative Data -->
+    <div class="table-header mr-3 ml-3">
+        <h3><i><img src="{% static 'oscar/img/ui/alter.jpg' %}" style=" max-width: 20px; max-height: 20px;"></i> {% trans "Onboarding Registered Address " %}</h3>
+    </div>
+    <div class="card card-body mr-3 ml-3">
+        <div class="row pt-1 pr-3 pl-3 pb-3">
+            <input type="number" name="onboarding_comm_details" value="{{ onboarding_comm_details }}" hidden>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="reg_address">Registration address:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Registration address" name="reg_address" id="reg_address" value="{{ reg_address }}">
+                    <span class="error-message" style="color: red;">{{ reg_address_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="reg_city">Registration city :<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="reg_city" name="reg_city" id="reg_city" value="{{ reg_city }}">
+                    <span class="error-message" style="color: red;">{{ reg_city_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="reg_postal_code">Registration postal code :<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Registration postal code" name="reg_postal_code" id="reg_postal_code" value="{{ reg_postal_code }}">
+                    <span class="error-message" style="color: red;">{{ reg_postal_code_error }}</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="reg_state">Registration state:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="reg_state" name="reg_state" id="reg_state" value="{{ reg_state }}">
+                    <span class="error-message" style="color: red;">{{ reg_state_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="reg_country">Registration country:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Registration country" name="reg_country" id="reg_country" value="{{ reg_country }}">
+                    <span class="error-message" style="color: red;">{{ reg_country_error }}</span>
+                </div>
+            </div>
+        </div>
+        <!-- Save button row -->
+        <div class="row">
+            <div class="col-md-12 text-left">
+                <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    {% if search_result %}
+    <h1>{{ search_result }}</h1>
+    {% endif %}
+</form>
+{% elif client_id and onboarding_gst_verify and bussiness_details and onboarding_bank_details and onboarding_comm_details and onboarding_reg_details and not onboarding_warehouse_details  %}
+<form class="{% if onboarding_warehouse_details %}hidden{% endif %}" action="{% url 'ClientOnboardingStepSix' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- Onboarding Alternative Data -->
+    <div class="table-header mr-3 ml-3">
+        <h3><i><img src="{% static 'oscar/img/ui/alter.jpg' %}" style=" max-width: 20px; max-height: 20px;"></i> {% trans "Onboarding Warehouse " %}</h3>
+    </div>
+    <div class="card card-body mr-3 ml-3">
+        <div class="row pt-1 pr-3 pl-3 pb-3">
+            <input type="number" name="onboarding_reg_details" value="{{ onboarding_reg_details }}" hidden>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="warehouse_address">Warehouse Address:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Warehouse Address" name="warehouse_address" id="warehouse_address" value="{{ warehouse_address }}">
+                    <span class="error-message" style="color: red;">{{ warehouse_address_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="warehouse_state">Warehouse State:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Warehouse state" name="warehouse_state" id="warehouse_state" value="{{ warehouse_state }}">
+                    <span class="error-message" style="color: red;">{{ state_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="warehouse_postal_code">Warehouse Postal Code:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Warehouse Postal Code" name="warehouse_postal_code" id="warehouse_postal_code" value="{{ client_user_edit.warehouse_postal_code }}">
+                    <span class="error-message" style="color: red;">{{ pin_code_error }}</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="warehouse_city">Warehouse City:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Warehouse City" name="warehouse_city" id="warehouse_city" value="{{ warehouse_city }}">
+                    <span class="error-message" style="color: red;">{{ city_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="warehouse_country">Warehouse Country:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Warehouse Country" name="warehouse_country" id="warehouse_country" value="{{ warehouse_country }}">
+                    <span class="error-message" style="color: red;">{{ state_error }}</span>
+                </div>
+            </div>
+        </div>
+         <!-- Save button row -->
+        <div class="row">
+            <div class="col-md-12 text-left">
+                <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Next <i
+                        class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+    {% if search_result %}
+    <h1>{{ search_result }}</h1>
+    {% endif %}
+</form>
+{% elif client_id and onboarding_gst_verify and bussiness_details and onboarding_bank_details and onboarding_comm_details and onboarding_reg_details and onboarding_warehouse_details %}
+<form action="{% url 'ClientOnboardingStepSeven' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!--Start Onboarding Outlet Data -->
+    <div class="table-header mr-3 ml-3">
+        <h3><i><img src="{% static 'oscar/img/ui/bussiness.png' %}" style="solid-black max-width: 18px; max-height: 18px;"></i> {% trans "Onboarding Outlet" %}</h3>
+    </div>
+    <div class="card card-body mr-3 ml-3">
+        <div class="row pt-1 pr-3 pl-3 pb-3">
+            <input type="number" name="onboarding_warehouse_details" value="{{ onboarding_warehouse_details }}" hidden>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="outlet_address">Outlet Address:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Outlet Address" name="outlet_address" id="outlet_address" value="{{ outlet_address }}">
+                    <span class="error-message" style="color: red;">{{ outlet_address_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="outlet_state">Outlet State:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Outlet state" name="outlet_state" id="outlet_state" value="{{ outlet_state }}">
+                    <span class="error-message" style="color: red;">{{ state_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="outlet_postal_code">Outlet Postal Code:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Outlet Postal Code" name="outlet_postal_code" id="outlet_postal_code" value="{{ outlet_postal_code }}">
+                    <span class="error-message" style="color: red;">{{ pin_code_error }}</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="outlet_city">Outlet City:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Outlet City" name="outlet_city" id="outlet_city" value="{{ outlet_city }}">
+                    <span class="error-message" style="color: red;">{{ city_error }}</span>
+                </div>
+                <div class="form-group">
+                    <label for="outlet_country">Outlet Country:<span style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Outlet Country" name="outlet_country" id="outlet_country" value="{{ outlet_country }}">
+                    <span class="error-message" style="color: red;">{{ state_error }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-left">
+                <button type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;">Save</button>
+            </div>
+        </div>
+    </div>
+    <!--End Onboarding Warehouse Data -->
+    {% if search_result %}
+    <h1>{{ search_result }}</h1>
+    {% endif %}
+</form>
+{% endif %}
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js"></script> -->
+<script>
+    async function sendGSTNumber() {
+
+        const gstNumber = document.getElementById('gstInput').value.trim();
+        document.getElementById('verifyButton').disabled = true;
+
+
+        
+        const domain = window.location.origin;
+        const url = `${domain}/webhooks/gst/`;
+
+        // const url = 'http://127.0.0.1:8000/webhooks/gst/';
+
+        if (!gstNumber) {
+            alert('Please enter a GST number.');
+            return;
+        }
+        document.getElementById('loadingSpinner').style.display = 'block';
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ gst_no: gstNumber })
+            });
+
+            const data = await response.json();
+            console.log('Response:', data);
+
+            await checkDataStatus(data.req_id);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    async function checkDataStatus(req_id) {
+        const domainone = window.location.origin;
+        const checkUrl = `${domainone}/webhooks/check_data/`;
+
+        // const checkUrl = 'http://127.0.0.1:8000/webhooks/check_data/';
+        const interval = 15000; // 15 seconds in milliseconds
+
+        while (true) {
+            try {
+                const response = await fetch(checkUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ "request_id": req_id })
+                });
+
+                const data = await response.json();
+                console.log('Check Data :', data);
+                console.log('Check Data Response status:', data[0].status);
+
+
+                // Add your logic to handle the response data here
+                if (data[0].status === 'completed') {
+                    verifyButton.innerText = 'Verified';
+                    verifyButton.style.backgroundColor = 'green';
+                    verifyButton.disabled = true;
+                    document.getElementById('loadingSpinner').style.display = 'none';
+
+                    document.getElementById("additional-fields").style.display = "block";
+                    document.getElementById("additional-fields-right").style.display = "block";
+
+                    document.getElementById("gstInput").readOnly = true; // Make the GST input read-only
+
+                    const businessAddress = data[0].result.source_output.principal_place_of_business_fields.principal_place_of_business_address;
+
+
+                    const gstNumber = data[0].result.source_output.gstin;
+                    const panNumber = gstNumber.substring(2, gstNumber.length - 3);
+                    document.getElementById("pancard_no").value = panNumber;
+
+
+                    const [year, month, day] = data[0].result.source_output.date_of_registration.split("-");
+                    document.getElementById("date_of_establishment").value = `${year}-${month}-${day}`;
+
+                    // Clear any previous error message
+                    document.getElementById("verification-message").innerText = '';
+
+
+                    // alert('Data processing completed.');
+                    break;
+                }
+                if (data[0].status === 'failed') {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+
+                    alert('Data processing failed.');
+
+
+                    break;
+                }
+
+                // Wait for 15 seconds before the next request
+                await new Promise(resolve => setTimeout(resolve, interval));
+            } catch (error) {
+                console.error('Error:', error);
+                break;
+            }
+        }
+    }
+</script>
+{% endblock %}

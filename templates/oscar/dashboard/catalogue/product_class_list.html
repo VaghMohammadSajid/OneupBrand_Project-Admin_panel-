@@ -1,0 +1,71 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3 !important;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Product Type" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <a href="{% url 'dashboard:catalogue-class-create' %}" class="btn float-right"
+           style="background-color: #230BB3 !important; color: #ffffff;">
+            <i class="fas fa-plus-circle"></i> {% trans "Add New" %}
+        </a>
+        <h1>{% trans "Product Types" %}</h1>
+    </div>
+{% endblock header %}
+
+{% block dashboard_content %}
+    <table class="table table-striped table-hover table-bordered">
+        <caption><i class="fas fa-sitemap"></i> {% trans 'Product Types' %}</caption>
+        <thead style="background-color: #230BB3 !important;color: #fff;">
+        <tr>
+            <th style=" font-weight: normal;">{% trans "S.No" %}</th>
+            <th style="font-weight: normal;">{% trans "Name" %}</th>
+            <th style="font-weight: normal;">{% trans "Requires shipping" %}</th>
+            <th style="font-weight: normal;">{% trans "Track stock?" %}</th>
+            <th style="font-weight: normal;">{% trans "Actions" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if classes %}
+            {% for class in classes %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a style="color: #230BB3 !important;"
+                           href="{% url 'dashboard:catalogue-class-update' class.id %}">{{ class.name }}</a></td>
+                    <td>
+                        <a style="color: #230BB3 !important;"
+                           href="{% url 'dashboard:catalogue-class-update' class.id %}">{{ class.requires_shipping|yesno }}</a>
+                    </td>
+                    <td>
+                        <a style="color: #230BB3 !important;"
+                           href="{% url 'dashboard:catalogue-class-update' class.id %}">{{ class.track_stock|yesno }}</a>
+                    </td>
+                    <td>
+                        <a class="btn btn-sm" style="background-color: #230BB3 !important; color: #ffffff;"
+                           href="{% url 'dashboard:catalogue-class-update' pk=class.id %}">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'dashboard:catalogue-class-delete' pk=class.id %}"
+                           class="btn btn-danger btn-sm"
+                        ><i
+                                class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        {% else %}
+            <tr>
+                <td colspan="12">{% trans "There are no product types." %}</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endblock dashboard_content %}

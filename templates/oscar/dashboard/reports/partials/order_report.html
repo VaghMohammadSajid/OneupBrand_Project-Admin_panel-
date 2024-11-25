@@ -1,0 +1,43 @@
+{% extends 'oscar/dashboard/reports/index.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block report %}
+    <table class="table table-striped table-bordered table-hover">
+        {% if objects %}
+            <thead style="background-color: #230BB3 !important;color: #fff;">
+            <tr>
+                <th style="font-weight: normal;">{% trans "S.No" %}</th>
+                <th style="font-weight: normal;">{% trans "Order Number" %}</th>
+                <th style="font-weight: normal;">{% trans "Name" %}</th>
+                <th style="font-weight: normal;">{% trans "Email" %}</th>
+                <th style="font-weight: normal;">{% trans "Total Incl. Tax" %}</th>
+                <th style="font-weight: normal;">{% trans "Date Placed" %}</th>
+                <th style="font-weight: normal;">{% trans "Action" %}</th>
+            </tr>
+            </thead>
+            {% for order in objects %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a style="color: #230BB3 !important;" href="{% url 'dashboard:order-detail' order.number %}">{{ order.number }}</a></td>
+                    <td>
+                        {% if order.user %}
+                            <a style="color: #230BB3 !important;" href="{% url 'dashboard:user-detail' order.user.id %}">{{ order.user.get_full_name|default:"-" }}</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ order.email }}</td>
+                    <td>{{ order.total_incl_tax|currency:order.currency }}</td>
+                    <td>{{ order.date_placed|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <a class="btn" style="background-color: #230BB3 !important; color: #ffffff;" href="{% url 'dashboard:order-detail' number=order.number %}"><i class="fa-solid fa-eye"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr><td>{% trans "No results found." %}</td></tr>
+        {% endif %}
+    </table>
+    {% include "oscar/dashboard/partials/pagination.html" %}
+{% endblock %}

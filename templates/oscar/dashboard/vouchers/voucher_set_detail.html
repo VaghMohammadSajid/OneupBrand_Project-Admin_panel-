@@ -1,0 +1,217 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+
+{% block title %}
+    {{ voucher_set.voucher.name }} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;"
+                                           href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;"
+                                           href="{% url 'voucher-sets' %}">{% trans "Voucher sets" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ voucher_set.voucher.name }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+
+
+    <div class="page-header">
+        <div class="float-right">
+            <div class="dropdown">
+                <button style="background-color: #230BB3 !important; color: #fff;" class="btn dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-download"></i>{% trans " Share" %}
+                </button>
+                <div class="dropdown-menu dropdown-menu-right " aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="/voucher/download/{{ voucher_set.voucher.pk }}/">
+                        {% trans "Download" %}
+                    </a>
+                    <a class="dropdown-item" href="/voucher/send_mail/{{ voucher_set.voucher.pk }}/">
+                        {% trans "Send" %}
+                    </a>
+                    {% if request.user.is_superuser %}
+                        <a class="dropdown-item" href="/voucher/CSV-Download/{{ voucher_set.voucher.pk }}/">
+                            {% trans "Download CSV" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <h1>{% trans "Voucher set" %} '{{ voucher_set.voucher.name }}'</h1>
+    </div>
+    <style>
+        #default > div > div > div.page-content > table > tbody > tr > th > a {
+            color: #230BB3;
+        }
+        #default > div > div > div.page-content > table > thead > tr > th > a{
+            color: #ffffff;
+        }
+    </style>
+
+{% endblock header %}
+
+
+{% block dashboard_content %}
+    {% include "oscar/dashboard/vouchers/partials/voucher_set_details_table.html" %}
+
+    <div class="table-header">
+        <h3><i class="fas fa-search"></i> {% trans "Search vouchers" %}</h3>
+    </div>
+    <div class="card card-body bg-light">
+        <form method="get" class="form-inline">
+            {% include 'oscar/partials/form_fields_inline.html' with form=form %}
+            <button type="submit" class="btn"
+                    style="background-color: #230BB3 !important; color: #fff;">{% trans "Search" %}</button>
+            <a href="{% url 'dashboard:voucher-set-detail' pk=voucher_set.voucher.pk %}"
+               class="btn btn-secondary ml-1">{% trans "Reset" %}</a>
+        </form>
+        {% if search_filters %}
+            <div class="search-filter-list">
+                <label>Filters:</label>
+                {% for filter in search_filters %}
+                    <span class="badge badge-success">{{ filter }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <table class="table table-striped table-bordered table-hover">
+        <caption>
+            <i class="fas fa-money-bill"></i>
+            {% if search_filters %}
+                {% trans "Voucher Search Results" %}
+            {% else %}
+                {% trans "All Vouchers" %}
+            {% endif %}
+        </caption>
+        {% if vouchers %}
+            <thead style="background-color:#230BB3 !important;color: #ffffff;">
+            <tr>
+                <th style="font-weight: normal;">{% trans "S.No" %}</th>
+                <th style="font-weight: normal;">{% trans "Code" %}</th>
+                <th style="font-weight: normal;">{% anchor 'num_basket_additions' _("Num Baskets") %}</th>
+                <th style="font-weight: normal;">{% anchor 'num_orders' _("Num Orders") %}</th>
+                <th style="font-weight: normal;">{% anchor 'date_created' _("Date Created") %}</th>
+                <th style="font-weight: normal;">{% trans "Actions" %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for voucher in vouchers %}
+                <tr>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td>
+                        <span class="badge badge-secondary">{{ voucher.code }}</span>
+                    </td>
+                    <td>{{ voucher.num_basket_additions }}</td>
+                    <td>{{ voucher.num_orders }}</td>
+                    <td>{{ voucher.date_created|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <div class="btn-toolbar">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {% trans "Actions" %}
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="{% url 'dashboard:voucher-stats' pk=voucher.id %}">
+                                        {% trans "Status" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'dashboard:voucher-delete' pk=voucher.id %}">
+                                        {% trans "Delete" %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        {% else %}
+            <tr>
+                <td>{% trans "No Vouchers Found." %}</td>
+            </tr>
+        {% endif %}
+    </table>
+    {% include "oscar/partials/pagination.html" %}
+
+    <div class="table-header">
+        <h2>{% trans "Attached Voucher Type" %}</h2>
+    </div>
+    <table class="table table-striped table-bordered table-hover">
+        {% if voucher_set.voucher.vouchers.first.offers.exists %}
+            <thead style="background-color:#230BB3 !important;color: #ffffff;">
+            <tr>
+                <th style="font-weight: normal;">{% trans "Voucher Type Name" %}</th>
+                <th style="font-weight: normal;">{% trans 'Category' %}</th>
+                <th style="font-weight: normal;">{% trans 'Attribute Value' %}</th>
+                <th style="font-weight: normal;">{% trans 'Discount Type' %}</th>
+                <th style="font-weight: normal;">{% trans 'Amount or Percentage' %}</th>
+                <th style="font-weight: normal;">{% trans "Is Available?" %}</th>
+                <th style="font-weight: normal;">{% trans "Created Date" %}</th>
+{#                <th style="font-weight: normal;">{% trans "End Date" %}</th>#}
+            </tr>
+            </thead>
+            <tbody>
+            {% for offer in voucher_set.voucher.vouchers.first.offers.all %}
+                <tr>
+                    <td>
+                        <a style="color: #230BB3;"
+                           href="{% url 'dashboard:offer-detail' pk=offer.pk %}">{{ offer.name }}</a>
+                    </td>
+                    <td>
+                        {% for category in offer.condition.range.back_range.included_categories.all %}
+                            {{ category.name }}
+                            {% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            {{ "-" }}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for attributeValue in offer.condition.range.back_range.attr.all %}
+                            {{ attributeValue }}
+                            {% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            {{ "-" }}
+                        {% endfor %}
+                    </td>
+                    {% if offer.benefit.type == "Percentage" %}
+                        <td>Discount is a percentage off of the product's value</td>
+                    {% else %}
+                        <td>Discount is a fixed amount off of the product's value</td>
+                    {% endif %}
+                    <td>{{ offer.benefit.value }}</td>
+                    <td>{% if offer.is_available %}
+                        <span class="badge badge-success">{% trans "Yes" %}</span>
+                    {% else %}
+                        <span class="badge badge-danger">{% trans "No" %}</span>
+                    {% endif %}
+                    </td>
+                    <td>{{ offer.start_datetime|date:"d/m/Y H:i"|default:"-" }}</td>
+{#                    <td>{{ offer.end_datetime|date:"d/m/Y H:i"|default:"-" }}</td>#}
+                </tr>
+            {% endfor %}
+            </tbody>
+        {% else %}
+            <tr>
+                <td>{% trans "No offers are attached to this voucher set." %}</td>
+            </tr>
+        {% endif %}
+    </table>
+
+<!--    <div class="form-actions">-->
+<!--        <a href="{% url 'dashboard:voucher-set-update' pk=voucher_set.voucher.pk %}" class="btn"-->
+<!--           style="background-color: #230BB3 !important; color: #fff;">{% trans 'Edit' %}</a> {% trans "or" %}-->
+<!--        <a href="{% url 'dashboard:voucher-set-delete' pk=voucher_set.voucher.pk %}"-->
+<!--           class="btn btn-danger">{% trans 'Delete' %}</a> {% trans "or" %}-->
+<!--        <a class="btn btn-secondary" href="{% url 'voucher-sets' %}">{% trans "Cancel" %}</a>-->
+<!--    </div>-->
+{% endblock dashboard_content %}

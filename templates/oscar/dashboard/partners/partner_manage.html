@@ -1,0 +1,70 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page partners{% endblock %}
+{% block title %}
+    {{ partner.name }} | {% trans "Partners" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3 !important;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3 !important;" href="{% url 'dashboard:partner-list' %}">{% trans "Partners" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ partner.name }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block headertext %}{{ partner.name }}{% endblock %}
+
+{% block dashboard_content %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-header">
+                <h2>{{ title }}</h2>
+            </div>
+            {% include "oscar/dashboard/partials/form.html" with form=form class="card card-body" %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+        <h2 style="font-weight: bold;color: black;">{% trans "Users" %}</h2>
+        {% if users %}
+            <table class="table table-striped table-bordered">
+                <thead style="background-color: #230BB3 !important;color: #ffffff;">
+                    <tr>
+                        <th style="font-weight: normal;">{% trans 'S.No' %}</th>
+                        <th style="font-weight: normal;">{% trans 'Email' %}</th>
+                        <th style="font-weight: normal;">{% trans 'First name' %}</th>
+                        <th style="font-weight: normal;">{% trans 'Last name' %}</th>
+                        <th style="font-weight: normal;">{% trans 'Action' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><a style="color: #230BB3 !important;" href="{% url 'dashboard:partner-user-update' partner_pk=partner.pk user_pk=user.id %}">{{ user.email }}</a></td>
+                            <td>{{ user.first_name|default:"-" }}</td>
+                            <td>{{ user.last_name|default:"-" }}</td>
+                            <td>
+                                <form action="{% url 'dashboard:partner-user-unlink' partner_pk=partner.id user_pk=user.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger" data-loading-text="{% trans 'Unlinking...' %}">{% trans 'Unlink user' %}</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>{% trans "No users linked." %}</p>
+        {% endif %}
+        <div class="form-group">
+            <a class="btn" style="background-color: #230BB3 !important; color: #ffffff;" href="{% url 'dashboard:partner-user-create' partner_pk=partner.pk %}" >{% trans "Link a new user" %}</a>
+            <a class="btn" style="background-color: #230BB3 !important; color: #ffffff;" href="{% url 'dashboard:partner-user-select' partner_pk=partner.pk %}" >{% trans "Link an existing user" %}</a>
+        </div>
+    </div>
+{% endblock dashboard_content %}

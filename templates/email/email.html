@@ -1,0 +1,338 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table cellspacing="0" cellpadding="0" style="width: 640px; font-family: Poppins,sans-serif; margin-top: 0; margin-right: auto; margin-bottom: 0; margin-left: auto; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0; border: 1px solid #c9c9c9">
+        <tbody>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; background: #fff; background-color: #fff; color: #000">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 20%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: left">
+        
+        <img style="vertical-align: middle" src="https://adminoneupv1.stackerbee.com/static/oscar/email_img/img/logo.png" width="113" border="0" alt="Oneup Brands">
+        
+        </td>
+        <td style="width: 80%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: #ffffff">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right; font-size: 20px; font-weight: 600; color: #000">Order Confirmation</td>
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right; font-size: 12px; color: #000">Order ID <a style="font-weight: 600; color: #000; text-decoration: underline" href="#" rel="noreferrer" target="_blank">{{order.number}} </a></td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        <tr>
+ 
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 42px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; background: white">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 14px; font-weight: normal; line-height: 1.29; color: #202020; text-align: left">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 100%; text-align: left; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0">
+        <p style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 15px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 14px; line-height: 1.29; color: #202020">Hi <b> {{shipping_addres.first_name}} {{shipping_addres.last_name}} </b>,</p>
+        <p style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 15px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 14px; line-height: 1.29; color: #202020">Your Oneup Brands order has been placed successfully.</p>
+        <p style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 15px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 14px; line-height: 1.29; color: #202020">
+         </b>. Once packed and shipped, we shall update you on the promised date of delivery.
+        </p>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 16px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; background: #eff4f7; border-radius: 12px">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 12px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 20px; font-weight: 600; line-height: 1.25; color: #202020; text-align: left">
+        Your Order Details
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 12px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 60%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: left">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 12px; line-height: 1.5">
+        <span style="color: #6d6d6d">Order ID </span><a style="color: #268cb9; font-weight: 700; text-decoration: none" href="#" rel="noreferrer" target="_blank"> {{order.number}}</a>
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 12px; line-height: 1.5">
+        <span style="color: #6d6d6d">Order placed on </span><span style="color: #202020; font-weight: 700"> {{order.date_placed}} </span>
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 12px; line-height: 1.5">
+        <span style="color: #6d6d6d">Order delivered to </span>
+        <span style="color: #202020; font-weight: 700">
+        {{shipping_addres.first_name}} {{shipping_addres.last_name}} ,
+        {{shipping_addres.postcode}}
+        </span>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        <td style="width: 40%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right">
+        <a style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 15px; padding-right: 41px; padding-bottom: 15px; padding-left: 41px; background: #202020; color: #ffffff; text-align: center; font-size: 14px; font-weight: 600; line-height: 2.14; border-radius: 7px; text-decoration: none" href="https://oneupv1.stackerbee.com/order-history" target="_blank">View Order</a>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 16px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; background: #eff4f7; border-radius: 12px">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 18px; font-weight: 600; line-height: 1.28; text-align: left">
+        Items you have purchased
+        </td>
+        </tr>
+        {% for i,j in full %}
+        <tr>
+            <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 24px; padding-right: 0; padding-bottom: 16px; padding-left: 0">
+            <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+            <tbody>
+            <tr>
+            <td style="width: 10%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; vertical-align: top">
+            <a style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; display: block; text-decoration: none; width: 60px" href="http://www.Oneup Brands.com/lee-cooper-skinny-jeans-with-5-pocket-styling/p/441192152001" title="Skinny Jeans with 5-pocket Styling" rel="noreferrer" target="_blank">
+            <img src='https://adminoneupv1.stackerbee.com/media/{{j}}' width="60" height="74" border="0" alt="Skinny Jeans with 5-pocket Styling">
+            </a>
+            </td>
+            <td style="width: 70%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 12px; vertical-align: top; font-size: 12px; color: #202020; text-align: left">
+            <p style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 8px; padding-left: 0; font-weight: 700">
+            <a href="http://www.Oneup Brands.com/lee-cooper-skinny-jeans-with-5-pocket-styling/p/441192152001" title="Skinny Jeans with 5-pocket Styling" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-weight: 700; color: #202020" rel="noreferrer" target="_blank">
+            <span>{{i.product.title}}</span>
+            </a>
+            </p>
+            <p style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 8px; padding-left: 0">
+            <span style="color: #6d6d6d">Qty</span> <span style="font-weight: 700">{{i.quantity}}</span>
+            </p>
+            <p style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 8px; padding-left: 0">
+            <span style="color: #6d6d6d">Price</span> <span style="font-weight: 700">₹ {{i.stockrecord.price}}</span>
+            </p>
+            <p style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 8px; padding-left: 0">
+            <span style="color: #6d6d6d">Product will be shipped in  </span>
+            <span style="font-weight: 700">
+            2-3 days
+            </span>
+            </p>
+            </td>
+            <td style="width: 20%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; vertical-align: top; font-size: 14px; color: #202020; font-weight: 700; line-height: 1.57; text-align: right">
+            ₹ {{i.price_incl_tax}}
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            </td>
+            </tr>
+        <tr>
+            {% endfor %}
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 15px; padding-right: 0; padding-bottom: 0; padding-left: 0; color: #202020; border-top: 1px solid #c8c8c8">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 80%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right; font-size: 12px; line-height: 1.67">
+        Sub Total
+        </td>
+        <td style="width: 20%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right; font-size: 12px; line-height: 1.67">
+        ₹ {{sub}}
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 80%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right; font-size: 12px; line-height: 1.67">
+        Delivery Fee                                 
+        </td>
+        <td style="width: 20%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right; font-size: 12px; line-height: 1.67">
+        ₹ {{order.shipping_incl_tax}}
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 80%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 15px; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right; font-size: 16px; line-height: 1.67; font-weight: 700">Total Amount</td>
+        <td style="width: 20%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 15px; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right; font-size: 16px; line-height: 1.67; font-weight: 700">
+        ₹ {{order.total_incl_tax}}
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 80%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 15px; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right; font-size: 16px; line-height: 1.67; font-weight: 700">You Save</td>
+        <td style="width: 20%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 15px; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right; font-size: 16px; line-height: 1.67; font-weight: 700">
+        ₹ {{total_offer}}
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 16px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; background: #eff4f7; border-radius: 12px">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 50%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: left; vertical-align: top">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 12px; padding-left: 0; text-align: left; font-size: 18px; font-weight: 600; color: #202020; line-height: 1.28">
+        Delivery Address
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 8px; padding-left: 0; text-align: left; font-size: 16px; font-weight: 600; color: #202020; line-height: 1.25"> {{shipping_addres.first_name}} {{shipping_addres.last_name}} </td>
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: left; font-size: 14px; color: #202020; line-height: 1.29">
+        {{shipping_addres.line1}} ,<br>
+        {{shipping_addres.line2}} , {{shipping_addres.line3}}<br>  {{shipping_addres.state}} , <br>
+        {{shipping_addres.country}} - {{shipping_addres.postcode}} <br>
+        Mobile: <span style="color: #202020!important; font-weight: normal; text-decoration: none">  {{shipping_addres.phone_number}} </span>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        <td style="width: 50%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-align: right; vertical-align: top">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 12px; padding-left: 0; text-align: right; font-size: 18px; font-weight: 600; color: #202020; line-height: 1.28">Mode of Payment</td>
+        </tr>
+        <tr>
+        <td style="width: 50%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 8px; padding-left: 0; text-align: right; font-size: 14px; font-weight: 400; color: #202020; line-height: 1.25"> {{order.payment_types}}</td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 100%; text-align: left; font-size: 10px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 16px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; text-align: left">
+        <p style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 12px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 16px; line-height: 1.25; font-weight: 600">Please note:</p>
+        <p style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 15px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 12px; line-height: 1.25">We do not demand your banking and credit card details verbally or telephonically. Please do not divulge your details to fraudsters and imposters falsely claiming to be calling on Oneup Brands behalf.</p>
+        <p style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 12px; line-height: 1.25">Have feedback on your shopping experience or an order-related query? Ring us on <a style="color: #202020; text-decoration: none; font-weight: 600" href="tel:1234567890" title="Dail customer care number 1234567890" rel="noreferrer" target="_blank">1234567890</a> or e-mail us at <a style="color: #268cb9; text-decoration: none; font-weight: 600" href="mailto:Support@Oneup.com" title="Email to Support@Oneup.com" rel="noreferrer" onclick="">Support@Oneup.com</a>. Our Customer Care Executives would be glad to help you!</p>
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 30px; padding-right: 0; padding-bottom: 30px; padding-left: 0; background: #fff; text-align: center">
+        <table cellspacing="0" cellpadding="0" style="width: 285px; margin-top: 0; margin-right: auto; margin-bottom: 0; margin-left: auto; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 92px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 100px; padding-bottom: 0; padding-left: 0">
+        <table cellspacing="0" cellpadding="0" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 34px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0">
+        <img style="vertical-align: middle" src="https://adminoneupv1.stackerbee.com/static/oscar/email_img/img/tquality.png" width="34" height="36" border="0" alt="Assured Quality">
+        </td>
+        <td style="width: 42px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 16px; font-size: 10px; color: #000; text-align: left; vertical-align: middle">Assured<br>Quality</td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        <td style="width: 110px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 100px; padding-bottom: 0; padding-left: 0">
+        <table cellspacing="0" cellpadding="0" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 34px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0">
+        <img style="vertical-align: middle" src="https://adminoneupv1.stackerbee.com/static/oscar/email_img/img/thandpicked.png" width="34" height="36" border="0" alt="100% Handpicked">
+        </td>
+        <td style="width: 60px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 16px; font-size: 10px; color: #000; text-align: left; vertical-align: middle">100%<br>Original</td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        <td style="width: 85px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0">
+        <table cellspacing="0" cellpadding="0" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        <tbody>
+        <tr>
+        <td style="width: 32px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0">
+        <img style="vertical-align: middle" src="https://adminoneupv1.stackerbee.com/static/oscar/email_img/img/treturn.png" width="32" height="32" border="0" alt="Easy returns">
+        </td>
+        <td style="width: 37px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 16px; font-size: 10px; color: #000; text-align: left; vertical-align: middle">Mail<br>Returns</td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+        <tr>
+        <td style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 15px; padding-right: 24px; padding-bottom: 15px; padding-left: 24px; background: #f0f4f7">
+        <table cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-collapse: collapse; border-spacing: 0">
+        </table>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+</body>
+</html>

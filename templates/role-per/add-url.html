@@ -1,0 +1,40 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Add-Role" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'Manage-NewsLetter-Template' %}">{% trans "Add-Role " %}</a>
+            </li>
+            <li class="breadcrumb-item">{% trans "Create a Permission Url" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>Create A Role</h1>
+    </div>
+{% endblock %}
+{% block content %}
+
+
+<form action="" method="post">
+    {% csrf_token %}
+<input type="text" name="url_str" id="">
+<button type="submit" style="background-color: #230BB3 !important; color: #fff;" class="btn">start</button>
+</form>
+    </div>
+
+
+    </div>
+
+{% endblock %}

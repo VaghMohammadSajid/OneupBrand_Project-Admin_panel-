@@ -1,0 +1,72 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load category_tags %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+
+{% block body_class %}{{ block.super }} catalogue{% endblock %}
+
+{% block title %}
+    {% trans "Categories" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a style="color: #230BB3 !important;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {% trans "Categories" %}
+            </li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <a href="{% url 'dashboard:catalogue-category-create' %}" class="btn float-right"
+           style="background-color: #230BB3 !important; color: #ffffff;"><i
+                class="fas fa-plus-circle"></i> {% trans "Add New" %}</a>
+        <h1>{% trans "Categories" %}</h1>
+    </div>
+
+    <style>
+        #default > div > div > div.page-content > div.table-container > table > thead {
+            background-color: #230BB3;
+            color: #ffffff;
+        }
+
+        #default > div > div > div.page-content > div.table-container > table > thead > tr > th > a {
+            color: #ffffff;
+        }
+
+        #default > div > div > div.page-content > div.table-container > table > thead > tr > th {
+            color: #ffffff;
+            font-weight: normal;
+        }
+
+        #default > div > div > div.page-content > div.table-container > table > tbody > tr > td > a {
+            color: #230BB3;
+        }
+    </style>
+
+{% endblock header %}
+
+{% block dashboard_content %}
+{#        <div class="alert alert-secondary">#}
+{#            <div>{% trans "You are editing:" %}#}
+{#                <strong><a style="color: #230BB3 !important;" href="{% url 'dashboard:catalogue-category-list' %}">{% trans "Home" %}</a></strong>#}
+{#                {% if ancestors %}#}
+{#                    {% for ancestor in ancestors %}#}
+{#                        <strong><a style="color: #230BB3 !important;" href="{% url 'dashboard:catalogue-category-detail-list' pk=ancestor.pk %}">{{ ancestor.name }}</a></strong>{% if not forloop.last %} > {% endif %}#}
+{#                    {% endfor %}#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        </div>#}
+
+    {% render_table categories %}
+
+    {% if not child_categories %}
+        <h2>{% trans "There are no categories." %}</h2>
+    {% endif %}
+{% endblock dashboard_content %}

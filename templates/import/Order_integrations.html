@@ -1,0 +1,67 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load sorting_tags %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Order Integrations" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item">{% trans "Order Integrations" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>Order Integrations {% block headertext %}{% endblock %}</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="table-header">
+        <h3><i class="fas fa-user"></i> {% trans "Order Integrations" %}</h3>
+    </div>
+    <div class="table-responsive">
+
+
+        <table class="table table-striped table-hover table-bordered">
+            <thead style="background-color: #230BB3 !important; color: #fff;">
+            <tr>
+                <th style="font-weight: normal;">S.No</th>
+                <th style="font-weight: normal;">Order Id</th>
+                <th style="font-weight: normal;">AWB Number</th>
+                <th style="font-weight: normal;">New Status</th>
+                <th style="font-weight: normal;">Old Status</th>
+                <th style="font-weight: normal;">Date Updated</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for order_inte_data in order_integrations_data %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ order_inte_data.order_id }}</td>
+                    <td>{{ order_inte_data.awb_no }}</td>
+                    <td>{{ order_inte_data.new_status }}</td>
+                    <td>{{ order_inte_data.old_status }}</td>
+                    <td>{{ order_inte_data.new_status_time|date:"d/m/Y H:i" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="12">Order Integrations not found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}
+
+

@@ -1,0 +1,502 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load i18n %}
+{% load static %}
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Update Client Request" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'ClientRequestList' %}">{% trans "Client Request List" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Update" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block header %}
+<div class="page-header">
+    <h1>Update Client Request {% block headertext %}{% endblock %}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+        <form method="post" enctype="multipart/form-data" action="{% url 'ClientRequestDetailsSave' client_request_data.pk %}">
+            {% csrf_token %}
+
+             <!-- Sign Up Data -->
+            <div class="table-header mr-3 ml-3">
+                <h3><i class="fas fa-user-plus"></i> {% trans "Client Verification and Register" %}</h3>
+            </div>
+            <div class="card card-body mr-3 ml-3 mb-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email">Email:<span style="color: red; font-size: small;">*</span></label>
+
+                            <input class="form-control" type="email" placeholder="Email" name="email" id="email"
+                                   value="{{ client_request_data.request_user.email }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="primary_contact_person">Primary Contact Person:<span
+                                    style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Primary Contact Person"
+                                   name="primary_contact_person" id="primary_contact_person"
+                                   value="{{ client_request_data.request_user.primary_contact_person }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="company_name">Bussiness Name:<span
+                                    style="color: red; font-size: small;">*</span></label>
+                            <input required type="text" class="form-control" id="company_name" name="bussiness_name"
+                                   value="{{ client_request_data.request_user.bussiness_name }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="mobile_no">Mobile Number:<span
+                                    style="color: red; font-size: small;">*</span></label>
+                            <input type="text" class="form-control" id="mobile_no" name="mobile_number"
+                                   value="{{ client_request_data.request_user.mobile_number }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="designation">Designation:<span
+                                    style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="text" placeholder="Designation" name="designation"
+                                   id="designation" value="{{ client_request_data.request_user.designation }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onboarding Gst Verify Data -->
+            <div class="table-header mr-3 ml-3">
+                <h3><i class="fas fa-solid fa-money-check-dollar"></i> {% trans "GST Verification" %}</h3>
+            </div>
+            <div class="card card-body mr-3 ml-3 mb-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="gst_no">GST Number</label>
+                            <input  type="text" class="form-control" id="gst_no" name="gst_number"
+                                   value="{% if  client_request_data.onboarding_gst_verify.gst_number == None %} {% elif  client_request_data.onboarding_gst_verify.gst_number %}{{client_request_data.onboarding_gst_verify.gst_number}}{% endif %}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date_of_establishment">Date Of Establishment:<span style="color: red; font-size: small;">*</span></label>
+                            <input class="form-control" type="date" name="date_of_establishment" id="date_of_establishment" value="{{ client_request_data.onboarding_gst_verify.date_of_establishment|date:'Y-m-d' }}">
+                        </div>
+                 
+                   
+                       
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="pancard_no">Pancard Number:<span style="color: red; font-size: small;">*</span></label>
+                            <input required type="text" class="form-control" id="pancard_no" name="pancard_no" value="{{ client_request_data.onboarding_gst_verify.pancard_no }}">
+                        </div>
+                   
+                    
+                        
+                   
+                      
+
+                       
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onboarding Bussiness Data -->
+             <div class="table-header mr-3 ml-3">
+                 <h3><i><img src="{% static 'oscar/img/ui/bussiness.png' %}" style="max-width: 18px; max-height: 18px;"></i> {% trans "Bussiness Verification" %}</h3>
+            </div>
+             <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                    <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="first_company_type">First Company Type:<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="First Company Type" name="first_company_type" id="first_company_type" value="{{ client_request_data.onboarding_bussiness_details.first_company_type }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="industry_type">Industry Type:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Industry Type" name="industry_type"
+                               id="industry_type" value="{{ client_request_data.onboarding_bussiness_details.industry_type }}">
+                    </div>
+                </div>
+                    <div class="col-md-6">
+                 
+                    <div class="form-group">
+                        <label for="website_link">Website Link:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Website Link" name="website_link"
+                               id="website_link" value="{{ client_request_data.onboarding_bussiness_details.website_link }}">
+                    </div>
+                </div>
+                </div>
+             </div>
+
+             <!-- wherehouse -->
+
+             <div class="table-header mr-3 ml-3">
+                <h3><i><img src="{% static 'oscar/img/ui/alter.jpg' %}" style=" max-width: 20px; max-height: 20px;"></i> {% trans "Onboarding Warehouse Address" %}</h3>
+
+            </div>
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                <div class="col-md-6">
+                
+                   
+                    <div class="form-group">
+                        <label for="warehouse_address">Warehouse Address:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Warehouse address"
+                               name="warehouse_address"
+                               id="warehouse_address" value="{{ client_request_data.onboarding_Warehouse_ad.warehouse_address }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="warehouse_city">Warehouse City :<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Warehouse City"
+                               name="warehouse_city"
+                               id="warehouse_city" value="{{ client_request_data.onboarding_Warehouse_ad.warehouse_city }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="warehouse_postal_code">Warehouse Postal Code :<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Warehouse Postal Code"
+                               name="warehouse_postal_code"
+                               id="warehouse_postal_code" value="{{ client_request_data.onboarding_Warehouse_ad.warehouse_postal_code }}">
+                    </div>
+                  
+                </div>
+                <div class="col-md-6">
+                  
+                 
+                    <div class="form-group">
+                        <label for="warehouse_state">Warehouse State:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Warehouse State"
+                               name="warehouse_state"
+                               id="warehouse_state" value="{{ client_request_data.onboarding_Warehouse_ad.warehouse_state }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="warehouse_country">Warehouse Country:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Warehouse Country " name="warehouse_country"
+                               id="warehouse_country" value="{{ client_request_data.onboarding_Warehouse_ad.warehouse_country }}">
+                    </div>
+                   
+                </div>
+              </div>
+            </div>
+
+
+
+             <!-- where house end -->
+
+
+             <!-- outlet -->
+             <div class="table-header mr-3 ml-3">
+                <h3><i><img src="{% static 'oscar/img/ui/alter.jpg' %}" style=" max-width: 20px; max-height: 20px;"></i> {% trans "Onboarding Outlet Address" %}</h3>
+
+            </div>
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                <div class="col-md-6">
+                
+                   
+                    <div class="form-group">
+                        <label for="outlet_address">Outlet Address:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Outlet Address"
+                               name="outlet_address"
+                               id="outlet_address" value="{{ client_request_data.onboarding_OutletAddress_ad.outlet_address }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="outlet_city">Outlet City :<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Outlet City"
+                               name="outlet_city"
+                               id="outlet_city" value="{{ client_request_data.onboarding_OutletAddress_ad.outlet_city }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="outlet_postal_code">Outlet postal code :<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Outlet Postal Code"
+                               name="outlet_postal_code"
+                               id="outlet_postal_code" value="{{ client_request_data.onboarding_OutletAddress_ad.outlet_postal_code }}">
+                    </div>
+                  
+                </div>
+                <div class="col-md-6">
+                  
+                 
+                    <div class="form-group">
+                        <label for="outlet_state">Outlet state:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="outlet state"
+                               name="outlet_state"
+                               id="outlet_state" value="{{ client_request_data.onboarding_OutletAddress_ad.outlet_state }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="outlet_country">   Outlet country:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="outlet country" name="outlet_country"
+                               id="outlet_country" value="{{ client_request_data.onboarding_OutletAddress_ad.outlet_country }}">
+                    </div>
+                   
+                </div>
+              </div>
+            </div>
+            <!-- outletend -->
+
+            
+
+            <!-- test data -->
+            <div class="table-header mr-3 ml-3">
+                <h3><i><img src="{% static 'oscar/img/ui/alter.jpg' %}" style=" max-width: 20px; max-height: 20px;"></i> {% trans "Onboarding Registered Address" %}</h3>
+
+            </div>
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                <div class="col-md-6">
+                
+                   
+                    <div class="form-group">
+                        <label for="alternative_mobile">Registration address:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Registration address"
+                               name="reg_address"
+                               id="reg_address" value="{{ client_request_data.onboarding_reg_ad.reg_address }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg_city">Registration city :<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="reg_city"
+                               name="reg_city"
+                               id="reg_city" value="{{ client_request_data.onboarding_reg_ad.reg_city }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg_postal_code">Registration postal code :<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Registration postal code"
+                               name="reg_postal_code"
+                               id="reg_postal_code" value="{{ client_request_data.onboarding_reg_ad.reg_postal_code }}">
+                    </div>
+                  
+                </div>
+                <div class="col-md-6">
+                  
+                 
+                    <div class="form-group">
+                        <label for="reg_state">Registration state:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="reg_state"
+                               name="reg_state"
+                               id="reg_state" value="{{ client_request_data.onboarding_reg_ad.reg_state }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg_country">Registration country:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="Registration country" name="reg_country"
+                               id="reg_country" value="{{ client_request_data.onboarding_reg_ad.reg_country }}">
+                    </div>
+                   
+                </div>
+              </div>
+            </div>
+
+            <!-- test end -->
+
+            <!-- testdata last -->
+
+
+            <div class="table-header mr-3 ml-3">
+                <h3><i><img src="{% static 'oscar/img/ui/alter.jpg' %}" style=" max-width: 20px; max-height: 20px;"></i> {% trans "Onboarding Communication" %}</h3>
+            </div>
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                <div class="col-md-6">
+                
+                   
+                    <div class="form-group">
+                        <label for="communication_address">communication address:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="communication address"
+                               name="communication_address"
+                               id="communication_address" value="{{ client_request_data.onboarding_comm_ad.communication_address }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="communication_city">communication city :<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="communication city"
+                               name="communication_city"
+                               id="communication_city" value="{{ client_request_data.onboarding_comm_ad.communication_city }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="communication_state">communication state :<span style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="communication state"
+                               name="communication_state"
+                               id="communication_state" value="{{ client_request_data.onboarding_comm_ad.communication_state }}">
+                    </div>
+                  
+                </div>
+                <div class="col-md-6">
+                  
+                 
+                    <div class="form-group">
+                        <label for="communication_country">communication country:<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="communication country"
+                               name="communication_country"
+                               id="communication_country" value="{{ client_request_data.onboarding_comm_ad.communication_country }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="communication_postal_code">communication postal code :<span
+                                style="color: red; font-size: small;">*</span></label>
+                        <input class="form-control" type="text" placeholder="communication postal code" name="communication_postal_code"
+                               id="communication_postal_code" value="{{ client_request_data.onboarding_comm_ad.communication_postal_code }}">
+                    </div>
+                   
+                </div>
+              </div>
+            </div>
+
+            <!-- test last end -->
+
+            <!-- Onboarding Bank Data -->
+            <div class="table-header mr-3 ml-3">
+                <h3><i class="fas fa-home"></i> {% trans "Bank Verification" %}</h3>
+            </div>
+            <div class="card card-body mr-3 ml-3">
+                <div class="row pt-1 pr-3 pl-3 pb-3">
+                <div class="col-md-6">
+                   <div class="form-group">
+                        <label for="upload_pan">Upload PAN Card:</label>
+                        <input class="form-control" type="file" id="upload_pan" name="upload_pan" onchange="displayImagePreview(this, 'pan-preview')">
+                        {% if client_request_data.onboarding_bank_details.upload_pan %}
+                            <img id="pan-preview" src="{{ client_request_data.onboarding_bank_details.upload_pan.url }}" alt="PAN Card Image" class="img-fluid" style="margin-top:2px;max-width: 100px; max-height: 80px;">
+                        {% endif %}
+                   </div>
+                   
+                </div>
+
+
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="upload_gst">Upload GST:</label>
+                        <input class="form-control" type="file" id="upload_gst" name="upload_gst" onchange="displayImagePreview(this, 'gst-preview')">
+                        {% if client_request_data.onboarding_bank_details.upload_gst %}
+                            <img id="gst-preview" src="{{ client_request_data.onboarding_bank_details.upload_gst.url }}" alt="GST Image" class="img-fluid" style="margin-top:2px;max-width: 100px; max-height: 80px;">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="upload_gst">Certificate Of Corporation :</label>
+                        <input class="form-control" type="file" id="certificate_of_corporation" name="certificate_of_corporation" onchange="displayImagePreview(this, 'Certificate-Of-Corporation-preview')">
+                        {% if client_request_data.onboarding_bank_details.certificate_of_corporation %}
+                            <img id="Certificate-Of-Corporation-preview" src="{{ client_request_data.onboarding_bank_details.certificate_of_corporation.url }}" alt="Certificate Of Corporation Image" class="img-fluid" style="margin-top:2px;max-width: 100px; max-height: 80px;">
+                        {% endif %}
+                    </div>
+                </div>      
+                 <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="upload_gst">Msme :</label>
+                        <input class="form-control" type="file" id="msme" name="msme" onchange="displayImagePreview(this, 'Msme-preview')">
+                        {% if client_request_data.onboarding_bank_details.msme %}
+                            <img id="Msme-preview" src="{{ client_request_data.onboarding_bank_details.msme.url }}" alt="Msme Image" class="img-fluid" style="margin-top:2px;max-width: 100px; max-height: 80px;">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="upload_gst">Authorization Letter :</label>
+                        <input class="form-control" type="file" id="authorization_letter" name="authorization_letter" onchange="displayImagePreview(this, 'Authorization-preview')">
+                        {% if client_request_data.onboarding_bank_details.authorization_letter %}
+                            <img id="Authorization-preview" src="{{ client_request_data.onboarding_bank_details.authorization_letter.url }}" alt="Authorization Letter Image" class="img-fluid" style="margin-top:2px;max-width: 100px; max-height: 80px;">
+                        {% endif %}
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <!-- <div class="form-group">
+                        <label for="upload_gst">Aadhar Card :</label>
+                        <input class="form-control" type="file" id="adhaar" name="adhaar" onchange="displayImagePreview(this, 'Cancelation-preview')">
+                        {% if client_request_data.onboarding_bank_details.adhaar %}
+                            <img id="adhaar" src="{{ client_request_data.onboarding_bank_details.adhaar.url }}" alt="Aadhar Card Image" class="img-fluid" style="margin-top:2px;max-width: 100px; max-height: 80px;">
+                        {% endif %}
+                    </div> -->
+                    <div class="form-group">
+                        <label for="aadhar">Aadhar:</label>
+                        <input class="form-control" type="file" id="aadhar" name="aadhar" onchange="displayImagePreview(this, 'aadhar')">
+                        {% if client_request_data.onboarding_bank_details.aadhar %}
+                            <img id="aadhar" src="{{ client_request_data.onboarding_bank_details.aadhar.url }}" alt="aadhar Image" class="img-fluid" style="margin-top:2px;max-width: 100px; max-height: 80px;">
+                        {% endif %}
+                   </div>
+                </div>
+
+                
+                <!-- <div class="form-group">
+                    <label for="billing_address">Billing Address:<span
+                            style="color: red; font-size: small;">*</span></label>
+                    <input class="form-control" type="text" placeholder="Billing Address" name="billing_address" id="billing_address" value="{{ client_request_data.onboarding_bank_details.billing_address }}">
+                </div> -->
+            </div>
+            </div>
+                   <div class="modal-footer">
+                <button  type="submit" class="btn" style="background-color: #230BB3 !important; color: #fff;" name="status" value="Accepted">{% trans "Save" %}</button>
+                <!-- <button type="button" class="btn-sm btn-danger" data-toggle="modal" data-target="#rejectModal">{% trans "Rejected" %}</button> -->
+            </div>
+        </form>
+
+            <!-- Rejection Modal -->
+            <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="rejectModalLabel">{% trans "Reject Request" %}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="post" action="{% url 'ClientRequestDetailsAction' client_request_data.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="Rejected">  
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="rejection_reason">{% trans "Reason for Rejection" %}:</label>
+                                    <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" required></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger">{% trans "Confirm Rejection" %}</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+   
+    </div>
+</div>
+
+
+      
+      
+        
+                  
+    <script>
+        function displayImagePreview(input, previewId) {
+            var file = input.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var preview = document.getElementById(previewId);
+                    preview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+{% endblock %}

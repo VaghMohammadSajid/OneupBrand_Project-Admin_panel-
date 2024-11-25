@@ -1,0 +1,289 @@
+{% extends 'oscar/dashboard/layout.html' %}
+
+{% load currency_filters %}
+
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {% if offer.pk %}
+        {{ offer.name }}:
+    {% else %}
+        {% trans "Create New Voucher Type" %}:
+    {% endif %}
+    {{ title }} | {% trans "Voucher Type" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;"
+                                           href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a style="color: #230BB3;"
+                                           href="{% url 'dashboard:offer-list' %}">{% trans "Voucher Type" %}</a></li>
+            {% if offer.pk %}
+                <li class="breadcrumb-item">
+                    <a style="color: #230BB3;"
+                       href="{% url 'dashboard:offer-detail' pk=offer.pk %}">{{ offer.name }}</a>
+                </li>
+            {% else %}
+                <li class="breadcrumb-item">{% trans "Create New Voucher Type" %}</li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block headertext %}
+    {% if not offer.pk %}
+        {% trans "Create New Voucher Type" %}
+    {% else %}
+        {{ offer.name }}
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <div class="table-header mr-3 ml-3">
+        <h3><i class="fas fa-money-bill"></i> {% trans "Create New Voucher Type" %}</h3>
+    </div>
+    <div class="card card-body mr-3 ml-3 mb-3">
+        <form method="post" action="#">
+            {% csrf_token %}
+
+            <!-- First Row -->
+            <div class="row pr-3 pl-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="category">Included Categories</label>
+                        <select class="form-control" id="category" placeholder="Select Category" onchange="categoryFunc()"
+                                name="category" multiple>
+
+                            {% for single_category in all_category %}
+                            <option value="{{single_category.id}}">{{single_category.full_name}}</option>
+
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label for="Attribute_name">Attribute Name</label>
+                    <select class="form-control" id="Attribute_name" multiple="true" onchange="myfunc()" name="brands">
+
+                        {% for single_attribute in all_attributes %}
+                        <option value="{{single_attribute.id}}">{{single_attribute}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                </div>
+            </div>
+            <div class="row pr-3 pl-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Attribute_value">Attribute Value</label>
+                        <select class="form-control" id="Attribute_value" multiple name="attr_value">
+
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label for="Range_name">Voucher Type  Name <span style="color: red; font-size: small;">*</span></label>
+
+                    <input class="form-control" type="text" placeholder="Enter Voucher Type Name" name="offer_name"
+                           id="Range_name" required>
+                    <p>
+                        {% url 'dashboard:range-list' as range_list_url %}
+
+                    </p>
+                </div>
+                </div>
+            </div>
+            <div class="row pr-3 pl-3">
+               
+                
+            </div>
+            <div class="row pr-3 pl-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" name="description" placeholder="Enter Your Descriptions" id="description" rows="4" cols="50"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+
+            {% if search_result %}
+                <h1>{{ search_result }}</h1>
+            {% endif %}
+            {% block form_actions %}
+
+                <div class="fixed-actions-group">
+                    <div class="form-actions">
+                        <div class="float-left">
+                            {% block form_actions_buttons %}
+
+                                <button class="btn" style="background-color: #230BB3;color: #ffffff;" name="save"
+                                        type="submit"
+                                        data-loading-text="{% trans 'Saving...' %}">{% trans "Save" %}</button>
+                            {% endblock %}
+                        </div>
+
+                        <a class="btn btn-secondary ml-1" href="{% url 'dashboard:offer-list' %}">{% trans "Cancel" %}</a>
+                    </div>
+                </div>
+
+            {% endblock form_actions %}
+    </form>
+    </div>
+    <script defer >
+
+const cateSelect = document.getElementById("category");
+
+            var selected_values_cate = []
+            for (var i=0;i<cateSelect.options.length;i++)
+            {
+                if(cateSelect.options[i].selected)
+                {
+                    selected_values_cate.push(cateSelect.options[i].value)
+                }
+                console.log(selected_values_cate,"cate");
+
+            }
+            if (selected_values_cate.length > 0)
+            {
+            fetch("/voucher_type/get-brand-cate/", {
+                method: 'POST', // Specify the request method
+                headers: {
+                    'Content-Type': 'application/json' // Specify the content type
+                },
+                body: JSON.stringify({"cate":selected_values_cate}) // Include any data you want to send in the request body
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data
+               console.log(data);
+               const multiSelect = document.getElementById("Attribute_name");
+               multiSelect.innerHTML = '';
+               console.log(data['delivered']);
+               for(var i=0; i < data['delivered'].length;i++)
+               {
+
+                var option = document.createElement("option");
+                option.text = data['delivered'][i][0];
+                option.value = data['delivered'][i][1];
+                multiSelect.appendChild(option);
+               }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+            }
+        function categoryFunc()
+        {
+            const cateSelect = document.getElementById("category");
+            var selected_values_cate = []
+            for (var i=0;i<cateSelect.options.length;i++)
+            {
+                if(cateSelect.options[i].selected)
+                {
+                    selected_values_cate.push(cateSelect.options[i].value)
+                }
+                console.log(selected_values_cate,"cate");
+
+            }
+            fetch("/voucher_type/get-brand-cate/", {
+                method: 'POST', // Specify the request method
+                headers: {
+                    'Content-Type': 'application/json' // Specify the content type
+                },
+                body: JSON.stringify({"cate":selected_values_cate}) // Include any data you want to send in the request body
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data
+               console.log(data);
+               const multiSelect = document.getElementById("Attribute_name");
+               multiSelect.innerHTML = '';
+               console.log(data['delivered']);
+               for(var i=0; i < data['delivered'].length;i++)
+               {
+
+                var option = document.createElement("option");
+                option.text = data['delivered'][i][0];
+                option.value = data['delivered'][i][1];
+                multiSelect.appendChild(option);
+               }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+
+
+
+
+        function myfunc()
+        {
+            const multiSelect = document.getElementById("Attribute_name");
+            var selected_values = []
+            for (var i=0;i<multiSelect.options.length;i++)
+            {
+                if(multiSelect.options[i].selected)
+                {
+                    selected_values.push(multiSelect.options[i].value)
+                }
+                console.log(selected_values)
+
+            }
+            const cateSelect = document.getElementById("category");
+            var selected_values_cate = []
+            for (var i=0;i<cateSelect.options.length;i++)
+            {
+                if(cateSelect.options[i].selected)
+                {
+                    selected_values_cate.push(cateSelect.options[i].value)
+                }
+                console.log(selected_values_cate,"cate");
+                var domainName = "https://" + window.location.hostname;
+                console.log(domainName);
+            }
+            fetch("/voucher_type/get-brand/", {
+                method: 'POST', // Specify the request method
+                headers: {
+                    'Content-Type': 'application/json' // Specify the content type
+                },
+                body: JSON.stringify({"brand":selected_values,"cate":selected_values_cate}) // Include any data you want to send in the request body
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data
+               console.log(data);
+
+               const value_select = document.getElementById("Attribute_value");
+               value_select.innerHTML = '';
+               for(var i=0; i < data['data'].length;i++)
+               {
+
+                var option = document.createElement("option");
+                option.text = data['data'][i][0];
+                option.value = data['data'][i][0];
+                value_select.appendChild(option);
+               }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        }
+
+
+
+    </script>
+
+
+
+{% endblock %}

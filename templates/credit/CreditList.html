@@ -1,0 +1,85 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block title %}
+    {{ title }} {% trans "Credit Requests" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a style="color: #230BB3;" href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item">{% trans "Credit Requests" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>Credit Requests {% block headertext %}{% endblock %}</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="table-header">
+        <h3><i class="fas fa-user"></i> {% trans "All Credit Requests" %}</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+            <thead style="background-color: #230BB3 !important; color: #fff;">
+            <tr>
+                <th style="font-weight: normal;">S.No</th>
+                <th style="font-weight: normal;">User</th>
+                <th style="font-weight: normal;">Credit Request ID</th>
+                <th style="font-weight: normal;">Amount</th>
+                <th style="font-weight: normal;">Request Type</th> <!-- New Column -->
+                <th style="font-weight: normal;">Status</th>
+                <th style="font-weight: normal;">Submission Date</th>
+                <!-- <th style="font-weight: normal;">Action</th> -->
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for credit_request in credit_requests_data %}
+                    {% csrf_token %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ credit_request.user.username|default:'-' }}</td>
+                        <td>{{ credit_request.credit_request_id|default:'-' }}</td>
+                        <td>{{ credit_request.amount }}</td>
+                        <td>
+                            {% if credit_request.erp %}
+                                ERP
+                            {% else %}
+                                User
+                            {% endif %}
+                        </td> <!-- New Column Data -->
+                        <td>
+                            <span class="
+                                {% if credit_request.status == 'Requested' %}
+                                    text-primary
+                                {% elif credit_request.status == 'Approved' %}
+                                    text-success
+                                {% elif credit_request.status == 'Cancelled' %}
+                                    text-danger
+                                {% endif %} fw-bold">
+                                {{ credit_request.status }}
+                            </span>
+                        </td>
+                        <td>{{ credit_request.submission_date|date:"d/m/Y H:i" }}</td>
+                        <!-- <td>
+                            <a href="{% url 'credit-request-user-delete' credit_request.id %}" class="btn btn-danger btn-sm"
+                               onclick="return confirm('Are you sure you want to delete?')"><i class="fas fa-trash-alt"></i></a>
+                        </td> -->
+                    </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8">No Credit Requests Found.</td> <!-- Update colspan to match new column count -->
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
