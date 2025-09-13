@@ -20,7 +20,7 @@ It provides a seamless shopping experience with secure checkout, user authentica
 ## ▶️ How to Run
 ```bash
 # Clone the repository
-git clone https://github.com/VaghMohammadSajid/OneupBrand_Project-Admin_panel-
+git clone https://github.com/VaghMohammadSajid/OneupBrand_Project-Admin_panel-.git
 
 # Install dependencies
 pip install -r requirements.txt
